@@ -1,0 +1,18 @@
+{
+    "html": {
+        "indent_char": " ",
+        "indent_size": 4
+    },
+    "js": {
+        "indent_char": " ",
+        "indent_size": 4
+    },
+    "yml": {
+        "indent_char": " ",
+        "indent_size": 2
+    },
+    "Vagrantfile": {
+        "indent_char": " ",
+        "indent_size": 4
+    }
+}
