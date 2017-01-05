@@ -5,7 +5,7 @@ var expect = require('chai').expect,
     path = require('path'),
     fs = require('fs'),
     lib = require('../'),
-    dir = path.resolve(__dirname, 'config-lib-common');
+    dir = path.resolve(__dirname, '..', 'config');
 
 describe('class Config', function () {
 
@@ -14,18 +14,13 @@ describe('class Config', function () {
             if (err) {
                 return done(err);
             }
-            fs.writeFile(dir + '/config.development.js', 'module.exports = { "title": "development" };', function (writeErr) {
-                if (writeErr) {
-                    return done(writeErr);
-                }
-                fs.writeFile(dir + '/config.json', '{ "title": "default", "phone": 1234 }', done);
-            });
+            fs.writeFile(dir + '/config.js', 'module.exports = { "title": "development", "phone": 1234 };', done);
         });
     });
 
     describe('create an instance', function () {
 
-        it('should failed, if the dir parameter is not provided', function () {
+        it('should fail, if the dir parameter is not provided', function () {
 
             expect(function () {
                 return new lib.Config();
@@ -71,16 +66,11 @@ describe('class Config', function () {
     });
 
     after(function (done) {
-        fs.unlink(dir + '/config.development.js', function (err) {
+        fs.unlink(dir + '/config.js', function (err) {
             if (err) {
                 return done(err);
             }
-            fs.unlink(dir + '/config.json', function (deleteErr) {
-                if (deleteErr) {
-                    return done(deleteErr);
-                }
-                fs.rmdir(dir, done);
-            });
+            fs.rmdir(dir, done);
         });
     });
 

@@ -19,11 +19,8 @@ class Config {
         this.config = new nconf.Provider();
         this.config.use('memory');
 
-        // load in javascript file that produces an object with the neccessary properties, specific to environment
-        this.config.overrides(require(path.resolve(dir, 'config.' + process.env.NODE_ENV + '.js')));
-
-        // load a file, that is shared between all environments
-        this.config.defaults(require(path.resolve(dir, 'config.json')));
+        // load in the config file
+        this.config.defaults(require(path.resolve(dir, 'config.js')));
 
         // add hooks for environment flag
         if (process.env.NODE_ENV) {

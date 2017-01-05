@@ -18,14 +18,9 @@ describe('common/config', function () {
             if (err) {
                 return done(err);
             }
-            fs.writeFile(path.join(dir, 'config.development.js'), 'module.exports = { "title": "development" };', function (writeErr) {
-                if (writeErr) {
-                    return done(writeErr);
-                }
-                fs.writeFile(path.join(dir, 'config.json'), '{ "title": "default", "phone": 1234 }', function () {
-                    config = require('../common/config');
-                    return done();
-                });
+            fs.writeFile(dir + '/config.js', 'module.exports = { "title": "development", "phone": 1234 };', function () {
+                config = require('../common/config');
+                return done();
             });
         });
     });
@@ -41,16 +36,11 @@ describe('common/config', function () {
     });
 
     after(function (done) {
-        fs.unlink(dir + '/config.development.js', function (err) {
+        fs.unlink(dir + '/config.js', function (err) {
             if (err) {
                 return done(err);
             }
-            fs.unlink(dir + '/config.json', function (deleteErr) {
-                if (deleteErr) {
-                    return done(deleteErr);
-                }
-                fs.rmdir(dir, done);
-            });
+            fs.rmdir(dir, done);
         });
     });
 
