@@ -2,6 +2,10 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## 1.0.0-alpha.3
+
+- Added the `utils` package.
+
 ## 1.0.0-alpha.2
 
 ### Breaking changes
