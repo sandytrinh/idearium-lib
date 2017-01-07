@@ -6,6 +6,7 @@ module.exports = {
     mq: require('./lib/mq'),
     logs: require('./lib/logs'),
     utils: require('./lib/utils'),
+    middleware: require('./middleware'),
 
     // Export classes here.
     Config: require('./lib/config'),

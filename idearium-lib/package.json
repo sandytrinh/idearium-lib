@@ -29,10 +29,12 @@
   "devDependencies": {
     "chai": "3.5.0",
     "chai-as-promised": "5.3.0",
+    "express": "4.14.0",
     "gulp-bump": "2.1.0",
     "minimist": "1.2.0",
     "mitm": "1.2.1",
     "mocha": "2.4.5",
+    "supertest": "2.0.1",
     "test-console": "1.0.0"
   }
 }
