@@ -1,5 +1,4 @@
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+/* eslint-env node, mocha */
 
 'use strict';
 
@@ -46,6 +45,7 @@ describe('common/mq/messages', function () {
 
         // Catch and proxy any errors to `done`.
         try {
+            // eslint-disable-next-line no-unused-vars
             var mqMessages = require('../common/mq/messages');
         } catch (e) {
             return done(e);

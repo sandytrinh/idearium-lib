@@ -1,12 +1,10 @@
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+/* eslint-env node, mocha */
 
 'use strict';
 
 var expect = require('chai').expect,
     path = require('path'),
     fs = require('fs'),
-    lib = require('../'),
     dir = path.resolve(__dirname, '..', 'config');
 
 describe('common/config', function () {

@@ -1,13 +1,11 @@
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+'use strict';
 
-var fs = require('fs'),
-    path = require('path'),
-    express = require('express'),
+/* eslint-env node, mocha */
+
+var express = require('express'),
     request = require('supertest'),
     expect = require('chai').expect,
-    lib = require('../'),
-    dir = path.resolve(__dirname, '..', 'config');
+    lib = require('../');
 
 /**
  * Helper function to create an instance of an Express app.
@@ -28,13 +26,16 @@ function createAgent (app) {
 
 describe('middleware.configSettings', function () {
 
+    // This is run after common-config and will have therefore cached the config from the previous test.
     before(function(done) {
-        fs.mkdir(dir, function (err) {
-            if (err) {
-                return done(err);
-            }
-            fs.writeFile(dir + '/config.js', 'module.exports = { "title": "development", "phone": 1234 };', done);
-        });
+
+        let config = require('../common/config');
+
+        config.set('foo', 'bar');
+        config.set('bar', 'foo');
+
+        return done();
+
     });
 
     it('is an Express middleware function', function () {
@@ -67,12 +68,12 @@ describe('middleware.configSettings', function () {
         // Check the body is as it should be.
         function bodyMatches (res) {
 
-            if (!('title' in res.body)) {
-                throw new Error('Missing title');
+            if (!('foo' in res.body)) {
+                throw new Error('Missing foo');
             }
 
-            if (!('phone' in res.body)) {
-                throw new Error('Missing phone');
+            if (!('bar' in res.body)) {
+                throw new Error('Missing bar');
             }
 
         }
@@ -84,15 +85,6 @@ describe('middleware.configSettings', function () {
             .expect(bodyMatches)
             .expect(200, done);
 
-    });
-
-    after(function (done) {
-        fs.unlink(dir + '/config.js', function (err) {
-            if (err) {
-                return done(err);
-            }
-            fs.rmdir(dir, done);
-        });
     });
 
 });

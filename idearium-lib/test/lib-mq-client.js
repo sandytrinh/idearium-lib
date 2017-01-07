@@ -1,33 +1,18 @@
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+'use strict';
+
+/* eslint-env node, mocha */
 
 var expect = require('chai').expect,
-    path = require('path'),
-    fs = require('fs'),
-    dir = path.resolve(__dirname, 'config-common-mq'),
     mq = require('..').mq;
 
 describe('class mq.Client', function () {
-
-    before(function(done) {
-        fs.mkdir(dir, function (err) {
-            if (err) {
-                return done(err);
-            }
-            fs.writeFile(dir + '/config.development.js', 'module.exports = { "mqUrl": "amqp://localhost:5672" };', function (writeErr) {
-                if (writeErr) {
-                    return done(writeErr);
-                }
-                fs.writeFile(dir + '/config.json', '{ "config": true }', done);
-            });
-        });
-    });
 
     describe('will throw an Error', function () {
 
         it('if url is not provided', function () {
 
             var fn = function () {
+                // eslint-disable-next-line no-unused-vars
                 var ideariumMq = new mq.Client();
             };
 
@@ -68,20 +53,6 @@ describe('class mq.Client', function () {
 
         });
 
-    });
-
-    after(function (done) {
-        fs.unlink(dir + '/config.development.js', function (err) {
-            if (err) {
-                return done(err);
-            }
-            fs.unlink(dir + '/config.json', function (deleteErr) {
-                if (deleteErr) {
-                    return done(deleteErr);
-                }
-                fs.rmdir(dir, done);
-            });
-        });
     });
 
 });

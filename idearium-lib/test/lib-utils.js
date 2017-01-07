@@ -1,5 +1,6 @@
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+'use strict';
+
+/* eslint-env node, mocha */
 
 var expect = require('chai').expect,
     lib = require('../');

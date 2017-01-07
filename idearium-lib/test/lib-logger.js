@@ -1,11 +1,11 @@
 'use strict';
 
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+/* eslint-env node, mocha */
+/* eslint no-unused-vars:0 */
 
 const path = require('path'),
     fs = require('fs'),
-    Mitm = require('mitm'),
+    mitm = require('mitm'),
     stderr = require('test-console').stderr,
     chai = require('chai'),
     expect = chai.expect,
@@ -21,7 +21,7 @@ describe('class logs.Logger', function () {
 
     });
 
-    describe("instantiation", function () {
+    describe('instantiation', function () {
 
         it('can be instantiated', function () {
 
@@ -433,7 +433,7 @@ describe('class logs.Logger', function () {
         let mock;
 
         beforeEach(function () {
-            mock = Mitm();
+            mock = mitm();
         });
 
         afterEach(function () {
@@ -718,7 +718,7 @@ describe('class logs.Logger', function () {
             });
 
             // Catch the HTTP requests.
-            mock = Mitm();
+            mock = mitm();
 
             mock.on('connection', function (socket, opts) {
                 socket.on('data', function (buffer) {

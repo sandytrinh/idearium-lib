@@ -1,11 +1,12 @@
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+/* eslint-env node, mocha */
+
+'use strict';
 
 var path = require('path'),
     fs = require('fs'),
     chai = require('chai'),
     chaiAsPromised = require('chai-as-promised'),
-    should = chai.should(),
+    should = chai.should(), // eslint-disable-line no-unused-vars
     expect = chai.expect,
     lib = require('../'),
     dir = path.resolve(__dirname, 'lib');

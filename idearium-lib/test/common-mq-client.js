@@ -1,12 +1,6 @@
-/*eslint-env node, mocha */
-/*eslint no-unused-expressions:0, no-mixed-requires:0, quotes: 0*/
+/* eslint-env node, mocha */
 
 'use strict';
-
-const path = require('path'),
-    fs = require('fs'),
-    expect = require('chai').expect,
-    dir = path.resolve(__dirname, '..', 'config');
 
 describe('common/mq/client', function () {
 
