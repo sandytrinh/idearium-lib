@@ -48,7 +48,7 @@ describe('middleware.logError', function () {
 
     it('is an Express middleware function', function () {
 
-        let middlewareFn = lib.middleware.configSettings;
+        let middlewareFn = lib.middleware.logError;
 
         expect(middlewareFn).to.be.a('function');
 
