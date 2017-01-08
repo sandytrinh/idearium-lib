@@ -2,6 +2,10 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## 1.0.0-alpha.5
+
+- Improved `middleware.logRequest` and added a passing test case.
+
 ## 1.0.0-alpha.4
 
 - Added the `common/exception`.
