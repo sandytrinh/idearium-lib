@@ -7,14 +7,17 @@ module.exports = function (req, res, next) {
     // Load the configuration, and an instance of Logger.
     const config = require('../common/config'),
         Logger = require('../').logs.Logger,
-        exclude = ['admin\/public', 'ping'],
+        exclude = config.get('logRequestExclude') || ['admin\/public', 'ping'],
         regex = new RegExp('^\/' + exclude.join('|') + '\/?.*$'),
         start = Date.now();
 
-    // Do do any of this, if the regex matches.
+    // Don't do any of this, if the regex matches.
     if (regex.test(req.url)) {
-        return;
+        return next();
     }
+
+    // Let's move on straight away
+    next();
 
     // Create an instance of the logger.
     const log = new Logger({
@@ -34,9 +37,6 @@ module.exports = function (req, res, next) {
 
     // Set the response start.
     req.responseStart = req.responseStart || start;
-
-    // Let's move on straight away
-    next();
 
     // When the request is finished, log it.
     res.on('finish', function () {

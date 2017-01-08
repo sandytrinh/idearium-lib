@@ -4,6 +4,9 @@ var bunyan = require('bunyan');
 
 module.exports = function (err, req, res, next) {
 
+    // Let's move on straight away.
+    next(err);
+
     // Load the configuration, and an instance of Logger.
     const config = require('../common/config'),
         Logger = require('../').logs.Logger;
@@ -46,8 +49,5 @@ module.exports = function (err, req, res, next) {
 
     // Log the error.
     log.error(packet);
-
-    // Next middleware.
-    return next(err);
 
 };

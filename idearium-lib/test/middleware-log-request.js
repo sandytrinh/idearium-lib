@@ -108,6 +108,85 @@ describe('middleware.logRequest', function () {
 
     });
 
+    it('will not log excluded routes', function (done) {
+
+        let app = createApp(),
+            agent = createAgent(app),
+            count = 0;
+
+        // Mount the middleware to log the request
+        app.use(lib.middleware.logRequest);
+
+        // Mount some middleware that will just continue.
+        app.get('/', function (req, res, next) {
+            return next();
+        });
+
+        // eslint-disable-next-line no-unused-vars
+        app.get('/', function (req, res, next) {
+            count++;
+            return res.status(200).end('OK');
+        });
+
+        // eslint-disable-next-line no-unused-vars
+        app.get('/admin/public/file.txt', function (req, res, next) {
+            count++;
+            return res.status(200).end('OK');
+        });
+
+        // Run the test
+        agent
+        .get('/')
+        .expect(200, /OK/)
+        // eslint-disable-next-line no-unused-vars
+        .end(function (err, res) {
+
+            // Was there an error.
+            if (err) {
+                return done(err);
+            }
+
+            agent
+            .get('/admin/public/file.txt')
+            .expect(200, /OK/)
+            // eslint-disable-next-line no-unused-vars
+            .end(function (publicErr, publicRes) {
+
+                if (publicErr) {
+                    return done(publicErr);
+                }
+
+                // Now we should make sure the local file has some log data in it.
+                // Verify the log exists.
+                fs.readFile(path.join(process.cwd(), 'logs', 'request.log'), 'utf8', function (readErr, content) {
+
+                    // Handle any read errors
+                    if (readErr) {
+                        return done(readErr);
+                    }
+
+                    // Make sure both middleware were executed
+                    expect(count).to.eql(2);
+
+                    // Check out results.
+                    expect(content).to.match(/idearium-lib:middleware:log-request/);
+                    expect(content).to.match(/"method":"GET"/);
+                    expect(content).to.match(/"url":"\/"/);
+
+                    // Shouldn't log the excluded routes
+                    expect(content).to.not.match(/"url":"\/admin\/public\/file.txt"/);
+
+                    // We're all done
+                    return done();
+
+                });
+
+            });
+
+        });
+
+    });
+
     it('the username if it exists in req', function (done) {
 
         let app = createApp();
