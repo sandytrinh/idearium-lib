@@ -81,6 +81,10 @@ describe('class logs.Logger', function () {
 
     describe('file stream', function () {
 
+        // Sometimes there is a bit of lag when writing to the file system.
+        // Allow two retries on these tests.
+        this.retries(2);
+
         // Empty the file after each test.
         afterEach(function (done) {
             fs.truncate('/vagrant/idearium-lib/logs/application.log', done);

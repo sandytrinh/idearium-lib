@@ -5,14 +5,10 @@
 var path = require('path'),
     fs = require('fs'),
     chai = require('chai'),
-    chaiAsPromised = require('chai-as-promised'),
     should = chai.should(), // eslint-disable-line no-unused-vars
     expect = chai.expect,
     lib = require('../'),
     dir = path.resolve(__dirname, 'lib');
-
-// Setup chai with promises.
-chai.use(chaiAsPromised);
 
 describe('class Loader', function () {
 
@@ -40,29 +36,46 @@ describe('class Loader', function () {
 
     describe('works asynchronously (promises)', function () {
 
-        it('should load files', function () {
+        it('should load files', function (done) {
 
-            return new lib.Loader().load(dir).should.eventually.have.all.keys('logException', 'logRequest');
+            var loader = new lib.Loader();
+
+            loader.load(dir).then(function (files) {
+
+                expect(files).to.have.all.keys('logException', 'logRequest');
+                return done();
+
+            });
 
         });
 
-        it('should load files without camel case key names', function () {
+        it('should load files without camel case key names', function (done) {
 
             var loader = new lib.Loader();
 
             loader.camelCase = false;
 
-            return loader.load(dir).should.eventually.have.all.keys('log-exception', 'log-request');
+            loader.load(dir).then(function (files) {
+
+                expect(files).to.have.all.keys('log-exception', 'log-request');
+                return done();
+
+            });
 
         });
 
-        it('should load files with class case key names', function () {
+        it('should load files with class case key names', function (done) {
 
             var loader = new lib.Loader();
 
             loader.classCase = true;
 
-            return loader.load(dir).should.eventually.have.all.keys('LogException', 'LogRequest');
+            loader.load(dir).then(function (files) {
+
+                expect(files).to.have.all.keys('LogException', 'LogRequest');
+                return done();
+
+            });
 
         });
 
