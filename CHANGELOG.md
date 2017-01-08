@@ -2,6 +2,11 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## 1.0.0-alpha.4
+
+- Added the `common/exception`.
+- Added the `middleware` package with `middlware.configSettings`, `middlware.logError` and `middlware.logRequest`.
+
 ## 1.0.0-alpha.3
 
 - Added the `utils` package.
