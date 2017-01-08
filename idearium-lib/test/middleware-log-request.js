@@ -28,7 +28,7 @@ function createAgent (app) {
     return request.agent(app);
 }
 
-describe('middleware.logError', function () {
+describe('middleware.logRequest', function () {
 
     // Sometimes there is a bit of lag when writing to the socket and file system.
     // Allow two retries on these tests.
@@ -52,9 +52,7 @@ describe('middleware.logError', function () {
 
     it('is an Express middleware function', function () {
 
-        let middlewareFn = lib.middleware.logError;
-
-        expect(middlewareFn).to.be.a('function');
+        expect(lib.middleware.logRequest).to.be.a('function');
 
     });
 
@@ -62,24 +60,23 @@ describe('middleware.logError', function () {
 
         let app = createApp();
 
-        // Mount some middleware that will throw an error.
+        // Mount the middleware to log the request
+        app.use(lib.middleware.logRequest);
+
+        // Mount some middleware that will just continue.
         app.get('/', function (req, res, next) {
-            return next(new Error('A file error.'));
+            return next();
         });
 
-        // Mount the middleware to log the error
-        app.use(lib.middleware.logError);
-
-        // Mount some middleware to handle the error
         // eslint-disable-next-line no-unused-vars
-        app.use(function (err, req, res, next) {
-            return res.status(500).end(err.toString());
+        app.get('/', function (req, res, next) {
+            return res.status(200).end('OK');
         });
 
         // Run the test
         createAgent(app)
         .get('/')
-        .expect(500, /Error: A file error/)
+        .expect(200, /OK/)
         // eslint-disable-next-line no-unused-vars
         .end(function (err, res) {
 
@@ -90,7 +87,7 @@ describe('middleware.logError', function () {
 
             // Now we should make sure the local file has some log data in it.
             // Verify the log exists.
-            fs.readFile(path.join(process.cwd(), 'logs', 'error.log'), 'utf8', function (readErr, content) {
+            fs.readFile(path.join(process.cwd(), 'logs', 'request.log'), 'utf8', function (readErr, content) {
 
                 // Handle any read errors
                 if (readErr) {
@@ -98,7 +95,9 @@ describe('middleware.logError', function () {
                 }
 
                 // Check out results.
-                expect(content).to.match(/A file error/);
+                expect(content).to.match(/idearium-lib:middleware:log-request/);
+                expect(content).to.match(/"method":"GET"/);
+                expect(content).to.match(/"url":"\/"/);
 
                 // We're all done
                 return done();
@@ -113,31 +112,30 @@ describe('middleware.logError', function () {
 
         let app = createApp();
 
-        // Mount some middleware that will throw an error.
-        app.get('/', function (req, res, next) {
+        // Mount the middleware to log the reuqest
+        app.use(lib.middleware.logRequest);
+
+        // Mount some middleware that will just continue.
+        app.get('/user', function (req, res, next) {
 
             req.user = {
                 username: 'foobar',
                 _id: '000000000000'
             };
 
-            return next(new Error('A user error.'));
+            return next();
 
         });
 
-        // Mount the middleware to log the error
-        app.use(lib.middleware.logError);
-
-        // Mount some middleware to handle the error
         // eslint-disable-next-line no-unused-vars
-        app.use(function (err, req, res, next) {
-            return res.status(500).end(err.toString());
+        app.get('/user', function (req, res, next) {
+            return res.status(200).end('OK');
         });
 
         // Run the test
         createAgent(app)
-        .get('/')
-        .expect(500, /Error: A user error/)
+        .get('/user')
+        .expect(200, /OK/)
         // eslint-disable-next-line no-unused-vars
         .end(function (err, res) {
 
@@ -148,7 +146,7 @@ describe('middleware.logError', function () {
 
             // Now we should make sure the local file has some log data in it.
             // Verify the log exists.
-            fs.readFile(path.join(process.cwd(), 'logs', 'error.log'), 'utf8', function (readErr, content) {
+            fs.readFile(path.join(process.cwd(), 'logs', 'request.log'), 'utf8', function (readErr, content) {
 
                 // Handle any read errors
                 if (readErr) {
@@ -156,8 +154,10 @@ describe('middleware.logError', function () {
                 }
 
                 // Check out results.
-                expect(content).to.match(/A user error/);
-                expect(content).to.match(/foobar/);
+                expect(content).to.match(/idearium-lib:middleware:log-request/);
+                expect(content).to.match(/"method":"GET"/);
+                expect(content).to.match(/"url":"\/user"/);
+                expect(content).to.match(/"username":"foobar"/);
 
                 // We're all done
                 return done();
@@ -198,33 +198,32 @@ describe('middleware.logError', function () {
                 var msg = buffer.toString();
 
                 // Check out results.
-                expect(msg).to.match(/A remote error/);
-                expect(msg).to.match(/idearium-lib:middleware:log-error/);
-                expect(msg).to.match(/"level":50/);
+                expect(msg).to.match(/idearium-lib:middleware:log-request/);
+                expect(msg).to.match(/"method":"GET"/);
+                expect(msg).to.match(/"url":"\/log-request-stream"/);
 
                 return done();
 
             });
         });
 
-        // Mount some middleware that will throw an error.
-        app.get('/', function (req, res, next) {
-            return next(new Error('A remote error.'));
+        // Mount the middleware to log the reuqest
+        app.use(lib.middleware.logRequest);
+
+        // Mount some middleware that will just continue.
+        app.get('/log-request-stream', function (req, res, next) {
+            return next();
         });
 
-        // Mount the middleware to log the error
-        app.use(lib.middleware.logError);
-
-        // Mount some middleware to handle the error
         // eslint-disable-next-line no-unused-vars
-        app.use(function (err, req, res, next) {
-            return res.status(500).end(err.toString());
+        app.get('/log-request-stream', function (req, res, next) {
+            return res.status(200).end('OK');
         });
 
         // Run the test
         createAgent(app)
-        .get('/')
-        .expect(500, /Error: A remote error/)
+        .get('/log-request-stream')
+        .expect(200, /OK/)
         // eslint-disable-next-line no-unused-vars
         .end(function (err, res) {
 
@@ -238,7 +237,7 @@ describe('middleware.logError', function () {
     });
 
     after(function (done) {
-        fs.unlink(path.join(dir, 'error.log'), function (err) {
+        fs.unlink(path.join(dir, 'request.log'), function (err) {
 
             if (err) {
                 return done(err);

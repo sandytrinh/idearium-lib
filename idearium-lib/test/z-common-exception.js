@@ -10,6 +10,7 @@ var fs = require('fs'),
     mocha = require('mocha');
 
 // This is some dodgy code, but required to allow uncaught exception testing with Mocha.
+// This is why this file is prefixed with `z-` so that it runs last.
 // See https://github.com/mochajs/mocha/issues/1985
 let _runTest = mocha.Runner.prototype.runTest;
 mocha.Runner.prototype.runTest = function () {
