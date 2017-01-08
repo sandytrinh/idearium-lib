@@ -4,9 +4,13 @@ This document covers how to publish any code updates, to the private NPM reposit
 
 The following is an overview of the steps required:
 
-- Run `cd /vagrant/idearium-lib`.
-- Run `gulp bump-version` to increment the build number for the module.
-- Run `npm publish` to publish the new library.
+- [Host]    Run `cd /vagrant/idearium-lib`.
+- [Host]    Run `gulp bump-version` to increment the build number for the module (see below).
+- [Host]    Update the `CHANGELOG.md` file with your changes.
+- [Guest]   Execute `git commit .` and `git commit -m "Version bump to <version>."` to commit the updates.
+- [Guest]   Execute `git tag -a v<version> -m "Tagging v<version>."`.
+- [Guest]   Execute `git push --follow-tags` to push the latest commits, and tags.
+- [Host]    Run `npm publish` to publish the new library version to NPM.
 
 ## Versioning bumping
 
