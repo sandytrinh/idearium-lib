@@ -2,6 +2,13 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## Unreleased
+
+- Added the `Email` class.
+- Added the `emailServices` package.
+- Added the `emailServices.Mandrill` class.
+- Added passing tests for the `Email` class.
+
 ## 1.0.0-alpha.5
 
 - Improved `middleware.logRequest` and added a passing test case.

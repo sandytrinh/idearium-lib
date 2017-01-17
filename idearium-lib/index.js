@@ -7,9 +7,11 @@ module.exports = {
     logs: require('./lib/logs'),
     utils: require('./lib/utils'),
     middleware: require('./middleware'),
+    emailServices: require('./lib/email-services'),
 
     // Export classes here.
     Config: require('./lib/config'),
-    Loader: require('./lib/loader')
+    Loader: require('./lib/loader'),
+    Email: require('./lib/email')
 
 };
