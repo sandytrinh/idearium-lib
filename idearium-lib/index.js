@@ -12,6 +12,7 @@ module.exports = {
     // Export classes here.
     Config: require('./lib/config'),
     Loader: require('./lib/loader'),
-    Email: require('./lib/email')
+    Email: require('./lib/email'),
+    Hash: require('./lib/hash')
 
 };

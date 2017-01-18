@@ -4,10 +4,10 @@ This file is a history of the changes made to idearium-lib.
 
 ## Unreleased
 
-- Added the `Email` class.
+- Added the `Email` class and passing tests.
 - Added the `emailServices` package.
 - Added the `emailServices.Mandrill` class.
-- Added passing tests for the `Email` class.
+- Added the `Hash` class and passing tests.
 
 ## 1.0.0-alpha.5
 
