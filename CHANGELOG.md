@@ -2,7 +2,7 @@
 
 This file is a history of the changes made to idearium-lib.
 
-## Unreleased
+## 1.0.0-alpha.6
 
 - Added the `Email` class and passing tests.
 - Added the `emailServices` package.
