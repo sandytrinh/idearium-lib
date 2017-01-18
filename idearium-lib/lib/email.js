@@ -94,7 +94,7 @@ class Email {
         Email.validateMessage(message);
 
         // Send a request to send an email
-        this.service.send(this.apiKey, message, cb);
+        this.service.send(message, cb);
 
     }
 
