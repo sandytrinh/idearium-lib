@@ -109,6 +109,25 @@ describe('class Hash', function () {
 
         });
 
+        it('successfully compare a hash, without prior hashing', function (done) {
+
+            const hash = new lib.Hash(identifier);
+
+            hash.compare('$2a$10$H0S.zE4oymFcfWzcqa9OFuxCQwixGw7WolM.OjWD2hDz0/BbpsCT6', function (compareErr, comparison) {
+
+                if (compareErr) {
+                    return compareErr;
+                }
+
+                expect(comparison).to.exist;
+                expect(comparison).to.be.true;
+
+                return done();
+
+            });
+
+        });
+
     });
 
 });
