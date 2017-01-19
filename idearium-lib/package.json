@@ -10,7 +10,8 @@
   "scripts": {
     "pretest": "../vagrant/scripts/pretest.sh",
     "test": "../vagrant/scripts/test.sh",
-    "test-coverage": "../vagrant/scripts/test-coverage.sh"
+    "test-coverage": "../vagrant/scripts/test-coverage.sh",
+    "test-travis": "../vagrant/scripts/test-travis.sh"
   },
   "author": "Scott Mebberson",
   "repository": "https://github.com/idearium/idearium-lib.git",
