@@ -23,7 +23,7 @@ describe('common/mq/messages', function () {
                 return done(err);
             }
 
-            fs.writeFile(path.join(dir, 'test.js'), 'module.exports = { "consume": "" };', function (writeErr) {
+            fs.writeFile(path.join(dir, 'test.js'), 'module.exports = { "consume": function () {}, "publish": function () {} };', function (writeErr) {
 
                 if (writeErr) {
                     return done(writeErr);
@@ -54,6 +54,9 @@ describe('common/mq/messages', function () {
     });
 
     it('will faciliate producing and consuming messages', function (done) {
+
+        this.retries(2);
+        this.timeout(4000);
 
         var exchange = 'common-mq-messages',
             queueName = 'common-mq-messages-queue',
