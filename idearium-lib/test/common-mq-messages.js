@@ -9,6 +9,8 @@ const path = require('path'),
 
 describe('common/mq/messages', function () {
 
+    let message;
+
     // This is run after common-mq-client and will have therefore cached the config from the previous test.
     // Set the mqUrl value as common/mq/client uses it.
     before(function(done) {
@@ -19,7 +21,7 @@ describe('common/mq/messages', function () {
         fs.mkdir(dir, function (err) {
 
             // If it already exists, that's fine, let's just create the file itself.
-            if (err && (err.code && err.code !== 'EEXIST')) {
+            if (err) {
                 return done(err);
             }
 
@@ -28,6 +30,8 @@ describe('common/mq/messages', function () {
                 if (writeErr) {
                     return done(writeErr);
                 }
+
+                message = require('../messages/test.js');
 
                 return done();
 
@@ -41,7 +45,7 @@ describe('common/mq/messages', function () {
 
         // Let's make use of require caching here. We'll require test.js ahead of time and update
         // the function, to a local one that has access to done.
-        require('../messages/test.js').consume = done;
+        message.consume = done;
 
         // Catch and proxy any errors to `done`.
         try {
@@ -63,7 +67,7 @@ describe('common/mq/messages', function () {
             mqClient = require('../common/mq/client');
 
         // Recreate the consume function.
-        require('../messages/test.js').consume = function () {
+        message.consume = function () {
 
             mqClient.consume((channel) => {
 
@@ -109,7 +113,7 @@ describe('common/mq/messages', function () {
         };
 
         // Create the publish function.
-        require('../messages/test.js').publish = function (data) {
+        message.publish = function (data) {
 
             // Publish anything we receive into RabbitMQ.
             mqClient.publish((channel) => {
