@@ -18,8 +18,18 @@ class Manager extends EventEmitter {
         // We'll store the loaded messages here.
         this.messages = {};
 
+        // We'll store the path for later on
+        this.path = path;
+
+        // Load in the messages straight away.
+        this.load();
+
+    }
+
+    load () {
+
         // Let's attempt to the messages in straight away.
-        this.loader.load(path).then((messages) => {
+        this.loader.load(this.path).then((messages) => {
 
             // Add the messages to our class instance.
             this.messages = messages;

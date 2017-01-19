@@ -66,8 +66,13 @@ describe('common/mq/messages', function () {
             queueName = 'common-mq-messages-queue',
             mqClient = require('../common/mq/client');
 
+        console.log(message);
+        console.log(message.consume);
+
         // Recreate the consume function.
         message.consume = function () {
+
+            console.log('Register consume');
 
             mqClient.consume((channel) => {
 
@@ -135,8 +140,15 @@ describe('common/mq/messages', function () {
             // This will be cached.
             var mqMessages = require('../common/mq/messages');
 
+            console.log(mqMessages.messages);
+
+            // Reload the messages as they'll have changed now.
+            mqMessages.load();
+
             // Run this manually, as it will have already run once.
-            mqMessages.registerConsumers();
+            // mqMessages.registerConsumers();
+
+            console.log(mqMessages.messages);
 
             // Publish a test message.
             require('../messages/test.js').publish({'common-mq-messages-test': true});
