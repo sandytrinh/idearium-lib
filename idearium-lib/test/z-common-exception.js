@@ -82,7 +82,7 @@ describe('common/exception', function () {
 
             // Now we should make sure the local file has some log data in it.
             // Verify the log exists.
-            fs.readFile(path.join(process.cwd(), 'logs', 'exception.log'), 'utf8', function (readErr, content) {
+            fs.readFile(path.join(dir, 'exception.log'), 'utf8', function (readErr, content) {
 
                 // Handle any read errors
                 if (readErr) {
