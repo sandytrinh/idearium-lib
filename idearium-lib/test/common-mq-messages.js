@@ -59,20 +59,18 @@ describe('common/mq/messages', function () {
 
     it('will faciliate producing and consuming messages', function (done) {
 
-        this.retries(2);
         this.timeout(4000);
 
         var exchange = 'common-mq-messages',
             queueName = 'common-mq-messages-queue',
             mqClient = require('../common/mq/client');
 
-        console.log(message);
-        console.log(message.consume);
+        // This runs after test/common-mq-client.
+        // That means some things have been cached.
+        // The following test has been setup to accomodate that.
 
         // Recreate the consume function.
-        message.consume = function () {
-
-            console.log('Register consume');
+        message.consume = function consumeTest () {
 
             mqClient.consume((channel) => {
 
@@ -118,7 +116,7 @@ describe('common/mq/messages', function () {
         };
 
         // Create the publish function.
-        message.publish = function (data) {
+        message.publish = function publishTest (data) {
 
             // Publish anything we receive into RabbitMQ.
             mqClient.publish((channel) => {
@@ -138,20 +136,29 @@ describe('common/mq/messages', function () {
         try {
 
             // This will be cached.
-            var mqMessages = require('../common/mq/messages');
+            let mqMessages = require('../common/mq/messages');
 
-            console.log(mqMessages.messages);
+            // Wait until everything is loaded.
+            mqMessages.addListener('load', () => {
 
-            // Reload the messages as they'll have changed now.
-            mqMessages.load();
+                // Run this manually, as it will have already run once.
+                mqMessages.registerConsumers();
 
-            // Run this manually, as it will have already run once.
-            // mqMessages.registerConsumers();
+                // Restart the RabbitMQ connection so that our new consumer is registered.
+                mqClient.reconnect();
 
-            console.log(mqMessages.messages);
+                // Wait until everything is connected again.
+                mqClient.addListener('connect', function () {
 
-            // Publish a test message.
-            require('../messages/test.js').publish({'common-mq-messages-test': true});
+                    // Publish a test message.
+                    require('../messages/test.js').publish({'common-mq-messages-test': true});
+
+                });
+
+                // Handle any errors.
+                mqClient.addListener('error', done);
+
+            });
 
         } catch (e) {
             return done(e);
