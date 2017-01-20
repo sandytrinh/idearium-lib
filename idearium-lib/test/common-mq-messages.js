@@ -41,22 +41,6 @@ describe('common/mq/messages', function () {
 
     });
 
-    // it('will load consumers', function (done) {
-    //
-    //     // Let's make use of require caching here. We'll require test.js ahead of time and update
-    //     // the function, to a local one that has access to done.
-    //     message.consume = done;
-    //
-    //     // Catch and proxy any errors to `done`.
-    //     try {
-    //         // eslint-disable-next-line no-unused-vars
-    //         var mqMessages = require('../common/mq/messages');
-    //     } catch (e) {
-    //         return done(e);
-    //     }
-    //
-    // });
-
     it('will faciliate producing and consuming messages', function (done) {
 
         this.timeout(4000);
