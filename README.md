@@ -41,6 +41,26 @@ Everything should be updated and ready to go. Once the VM has restarted, continu
 - [Guest]   Setup NPM with `npm install`.
 - [Guest]   The tests require RabbitMQ, and we use a Docker container for this. Pre-pull the image with `docker pull smebberson/alpine-rabbitmq`.
 
+## Testing
+
+This repository has a complete test suite, which can be run by:
+
+- [Host]    Execute `vagrant ssh` to be provided with a bash shell within the virtual machine.
+- [Guest]   Get into the `/vagrant/idearium-lib` directory, by executing `cd /vagrant/idearium-lib`.
+- [Guest]   Execute `npm test` to run the tests.
+
+### Code coverage
+
+This repository offers code coverage insights via Istanbul and codecov.io.
+
+Run code coverage insights by:
+
+- [Host]    Execute `vagrant ssh` to be provided with a bash shell within the virtual machine.
+- [Guest]   Get into the `/vagrant/idearium-lib` directory, by executing `cd /vagrant/idearium-lib`.
+- [Guest]   Execute `npm run test-coverage` to run the tests.
+
+Upon any push to GitHub, Travis will run the tests (reviewed at https://travis-ci.org/idearium/idearium-lib) and the code coverage report will be updated (reviewed at https://codecov.io/gh/idearium/idearium-lib).
+
 ## Logging into NPM
 
 In order to publish this package to NPM, you need to log into NPM to provide authentication details. Follow these steps:
