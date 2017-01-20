@@ -1,5 +1,9 @@
 # idearium-lib
 
+[![Build Status](https://travis-ci.org/idearium/idearium-lib.svg?branch=master)](https://travis-ci.org/idearium/idearium-lib)
+[![codecov.io](https://codecov.io/github/idearium/idearium-lib/coverage.svg?branch=master)](https://codecov.io/github/idearium/idearium-lib?branch=master)
+
+
 This repository contains `idearium-lib`, which is a Node.js shared library for Idearium applications running on Node.js. Any code that is used across multiple applications (or within multiple Docker containers) should live here.
 
 The following documents the development environment, read [idearium-lib/README.md](idearium-lib/README.md) for information on the library itself.
