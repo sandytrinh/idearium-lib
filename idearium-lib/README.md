@@ -59,6 +59,29 @@ process.on('SIGTERM', function () {
 });
 ```
 
+#### SSL certs
+
+If you need to connect to RabbitMQ with some SSL certs, create the following directory structure:
+
+```
+|- mq-certs
+   |- ca
+        |- first.ca.cert
+        |- second.ca.cert
+   |- domain.cert
+   |- domain.key
+```
+
+The `mq-certs` folder should live alongside you Node.js entry point (i.e. `server.js` and alongside the `messages` and `config` directories).
+
+`common/mq/client` will look for a certificate and private key. If the paths `mq-certs/*.cert` and `mq-certs/*.key` exist, those files will be loaded and passed to RabbitMQ when connecting.
+
+There should only be one primary certificate and private key. The certificate filename must end in `.cert` but the actual name doesn't matter. The private key filename must end in `.key` by the actual name doesn't matter.
+
+`common/mq/client` will also look for certificate authority certificates and will attempt to load them all. If the path `mq-certs/ca` exists, all files within that directory will be loaded and passed to RabbitMQ when connecting.
+
+The filenames of the certificate authority certificates don't matter.
+
 ### common/mq/messages
 
 `common/mq/messages` will load files in the `messages` directory located at the root of the Node.js application. Files in the `messages` directory can be used to register RabbitMQ publish and consumer processes.
