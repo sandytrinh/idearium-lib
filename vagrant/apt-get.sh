@@ -18,6 +18,9 @@ configure_apt_get() {
     # Required for latest Git.
     add-apt-repository ppa:git-core/ppa
 
+    # Required for latest Ruby.
+    apt-add-repository ppa:brightbox/ruby-ng
+
     # Update apt-get.
     apt-get update
 
