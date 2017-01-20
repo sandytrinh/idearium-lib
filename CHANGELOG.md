@@ -2,6 +2,10 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## Unreleased
+
+- `common/mq/client` will now load SSL certs if they exist.
+
 ## 1.0.0-alpha.6
 
 - Added the `Email` class and passing tests.
