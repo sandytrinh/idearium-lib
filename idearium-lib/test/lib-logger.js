@@ -87,7 +87,7 @@ describe('class logs.Logger', function () {
 
         // Empty the file after each test.
         afterEach(function (done) {
-            fs.truncate('/vagrant/idearium-lib/logs/application.log', done);
+            fs.truncate(path.join(dir, 'application.log'), done);
         });
 
         it('will write to file', function (done) {
@@ -102,7 +102,7 @@ describe('class logs.Logger', function () {
             logger.error('Testing write to file');
 
             // Verify the log exists.
-            fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+            fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                 // Handle any errors
                 if (err) {
@@ -139,7 +139,7 @@ describe('class logs.Logger', function () {
                 logger.trace('Logging at trace level');
 
                 // Verify the log exists.
-                fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+                fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                     // Handle any errors
                     if (err) {
@@ -162,7 +162,7 @@ describe('class logs.Logger', function () {
                 logger.debug('Logging at debug level');
 
                 // Verify the log exists.
-                fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+                fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                     // Handle any errors
                     if (err) {
@@ -185,7 +185,7 @@ describe('class logs.Logger', function () {
                 logger.info('Logging at info level');
 
                 // Verify the log exists.
-                fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+                fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                     // Handle any errors
                     if (err) {
@@ -208,7 +208,7 @@ describe('class logs.Logger', function () {
                 logger.warn('Logging at warn level');
 
                 // Verify the log exists.
-                fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+                fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                     // Handle any errors
                     if (err) {
@@ -231,7 +231,7 @@ describe('class logs.Logger', function () {
                 logger.error('Logging at error level');
 
                 // Verify the log exists.
-                fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+                fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                     // Handle any errors
                     if (err) {
@@ -254,7 +254,7 @@ describe('class logs.Logger', function () {
                 logger.fatal('Logging at fatal level');
 
                 // Verify the log exists.
-                fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+                fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                     // Handle any errors
                     if (err) {
@@ -741,7 +741,7 @@ describe('class logs.Logger', function () {
         it('will output to file stream', function (done) {
 
             // Verify the log exists.
-            fs.readFile('/vagrant/idearium-lib/logs/application.log', 'utf8', function (err, content) {
+            fs.readFile(path.join(dir, 'application.log'), 'utf8', function (err, content) {
 
                 // Handle any errors
                 if (err) {

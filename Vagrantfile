@@ -66,25 +66,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # configuration step 2: apt-get
     config.vm.provision "shell", path: "vagrant/apt-get.sh"
 
-    # configuration step 4: docker (latest version)
+    # configuration step 3: docker (latest version)
     config.vm.provision "shell", path: "vagrant/docker.sh"
 
-    # configuration step 5: compose
+    # configuration step 4: compose
     config.vm.provision "shell", path: "vagrant/docker-compose.sh"
 
-    # configuration step 4: git
+    # configuration step 5: git
     config.vm.provision "shell", path: "vagrant/git.sh"
 
-    # configuration step 5: nodejs
+    # configuration step 6: nodejs
     config.vm.provision "shell", path: "vagrant/nodejs.sh"
 
-    # configuration step 7: setup ENV variables
+    # configuration step 7: ruby
+    config.vm.provision "shell", path: "vagrant/ruby.sh"
+
+    # configuration step 8: setup ENV variables
     config.vm.provision "shell", path: "vagrant/env.sh"
 
-    # configuration step 8: setup the development environment
+    # configuration step 9: setup the development environment
     config.vm.provision "shell", path: "vagrant/dependencies.sh"
 
-    # configuration step 9: clean (remove unccessary data and GBs)
+    # configuration step 10: clean (remove unccessary data and GBs)
     config.vm.provision "shell", path: "vagrant/clean.sh"
 
 end

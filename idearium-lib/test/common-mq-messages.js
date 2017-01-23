@@ -9,6 +9,8 @@ const path = require('path'),
 
 describe('common/mq/messages', function () {
 
+    let message;
+
     // This is run after common-mq-client and will have therefore cached the config from the previous test.
     // Set the mqUrl value as common/mq/client uses it.
     before(function(done) {
@@ -19,15 +21,17 @@ describe('common/mq/messages', function () {
         fs.mkdir(dir, function (err) {
 
             // If it already exists, that's fine, let's just create the file itself.
-            if (err && (err.code && err.code !== 'EEXIST')) {
+            if (err) {
                 return done(err);
             }
 
-            fs.writeFile(path.join(dir, 'test.js'), 'module.exports = { "consume": "" };', function (writeErr) {
+            fs.writeFile(path.join(dir, 'test.js'), 'module.exports = { "consume": function () {}, "publish": function () {} };', function (writeErr) {
 
                 if (writeErr) {
                     return done(writeErr);
                 }
+
+                message = require('../messages/test.js');
 
                 return done();
 
@@ -37,30 +41,20 @@ describe('common/mq/messages', function () {
 
     });
 
-    it('will load consumers', function (done) {
-
-        // Let's make use of require caching here. We'll require test.js ahead of time and update
-        // the function, to a local one that has access to done.
-        require('../messages/test.js').consume = done;
-
-        // Catch and proxy any errors to `done`.
-        try {
-            // eslint-disable-next-line no-unused-vars
-            var mqMessages = require('../common/mq/messages');
-        } catch (e) {
-            return done(e);
-        }
-
-    });
-
     it('will faciliate producing and consuming messages', function (done) {
+
+        this.timeout(4000);
 
         var exchange = 'common-mq-messages',
             queueName = 'common-mq-messages-queue',
             mqClient = require('../common/mq/client');
 
+        // This runs after test/common-mq-client.
+        // That means some things have been cached.
+        // The following test has been setup to accomodate that.
+
         // Recreate the consume function.
-        require('../messages/test.js').consume = function () {
+        message.consume = function consumeTest () {
 
             mqClient.consume((channel) => {
 
@@ -106,7 +100,7 @@ describe('common/mq/messages', function () {
         };
 
         // Create the publish function.
-        require('../messages/test.js').publish = function (data) {
+        message.publish = function publishTest (data) {
 
             // Publish anything we receive into RabbitMQ.
             mqClient.publish((channel) => {
@@ -126,13 +120,29 @@ describe('common/mq/messages', function () {
         try {
 
             // This will be cached.
-            var mqMessages = require('../common/mq/messages');
+            let mqMessages = require('../common/mq/messages');
 
-            // Run this manually, as it will have already run once.
-            mqMessages.registerConsumers();
+            // Wait until everything is loaded.
+            mqMessages.addListener('load', () => {
 
-            // Publish a test message.
-            require('../messages/test.js').publish({'common-mq-messages-test': true});
+                // Run this manually, as it will have already run once.
+                mqMessages.registerConsumers();
+
+                // Restart the RabbitMQ connection so that our new consumer is registered.
+                mqClient.reconnect();
+
+                // Wait until everything is connected again.
+                mqClient.addListener('connect', function () {
+
+                    // Publish a test message.
+                    require('../messages/test.js').publish({'common-mq-messages-test': true});
+
+                });
+
+                // Handle any errors.
+                mqClient.addListener('error', done);
+
+            });
 
         } catch (e) {
             return done(e);
