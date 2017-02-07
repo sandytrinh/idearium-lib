@@ -27,6 +27,9 @@ class Config {
             this.config.set(process.env.NODE_ENV, true);
         }
 
+        // Setup the environment.
+        this.config.set('env', process.env.NODE_ENV);
+
         // always prefer ENV variables, over those loaded above
         this.config.env();
 

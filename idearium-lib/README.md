@@ -65,20 +65,21 @@ If you need to connect to RabbitMQ with some SSL certs, create the following dir
 
 ```
 |- mq-certs
-   |- ca
-        |- first.ca.cert
-        |- second.ca.cert
-   |- domain.cert
-   |- domain.key
+   |- {process.env.NODE_ENV}
+      |- ca
+           |- first.ca.cert
+           |- second.ca.cert
+      |- domain.cert
+      |- domain.key
 ```
 
 The `mq-certs` folder should live alongside you Node.js entry point (i.e. `server.js` and alongside the `messages` and `config` directories).
 
-`common/mq/client` will look for a certificate and private key. If the paths `mq-certs/*.cert` and `mq-certs/*.key` exist, those files will be loaded and passed to RabbitMQ when connecting.
+`common/mq/client` will look for a certificate and private key. If the paths `mq-certs/{process.env.NODE_ENV}/*.cert` and `mq-certs/{process.env.NODE_ENV}/*.key` exist, those files will be loaded and passed to RabbitMQ when connecting.
 
 There should only be one primary certificate and private key. The certificate filename must end in `.cert` but the actual name doesn't matter. The private key filename must end in `.key` by the actual name doesn't matter.
 
-`common/mq/client` will also look for certificate authority certificates and will attempt to load them all. If the path `mq-certs/ca` exists, all files within that directory will be loaded and passed to RabbitMQ when connecting.
+`common/mq/client` will also look for certificate authority certificates and will attempt to load them all. If the path `mq-certs/{process.env.NODE_ENV}/ca` exists, all files within that directory will be loaded and passed to RabbitMQ when connecting.
 
 The filenames of the certificate authority certificates don't matter.
 

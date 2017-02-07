@@ -2,6 +2,13 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## 1.0.0-alpha.8
+
+- You can now use `config.get('env')` to retrieve the value of `process.env.NODE_ENV`.
+- `common/mq/client` is now `process.env.NODE_ENV` aware and will load SSL certs if they exist in the `mq-certs/{process.env.NODE_ENV}` directory.
+- `common/mq/client` will now load certificate and key files separate to CA files. The loading of CA files is no longer dependent on a certificate and key file being present.
+- `common/mq/client` now sets the `servername` option to better support SSL based connections.
+
 ## 1.0.0-alpha.7
 
 - `common/mq/client` will now load SSL certs if they exist.

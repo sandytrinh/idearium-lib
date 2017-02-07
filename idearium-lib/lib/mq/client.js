@@ -1,6 +1,7 @@
 'use strict';
 
-var EventEmitter = require('events').EventEmitter,
+var url = require('url'),
+    EventEmitter = require('events').EventEmitter,
     amqp = require('amqplib'),
     when = require('when'),
     async = require('async'),
@@ -16,16 +17,16 @@ class Client extends EventEmitter {
      * @param  {Number} queueTimeout       Timeout (milliseconds) for re-queuing publish and consumer tasks. Defaults to 5000
      * @param  {Number} reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
      */
-    constructor(url, options, publishConcurrency, queueTimeout, reconnectTimeout) {
+    constructor(connectionString, options, publishConcurrency, queueTimeout, reconnectTimeout) {
 
-        if (!url) {
-            throw new Error('url parameter is required');
+        if (!connectionString) {
+            throw new Error('connectionString parameter is required');
         }
 
         // Init EventEmitter
         super();
 
-        this.url = url;
+        this.url = connectionString;
         this.options = options || {};
         this.consumerQueue = [];
         this.publishConcurrency = publishConcurrency || 3;
@@ -35,6 +36,12 @@ class Client extends EventEmitter {
         this.state = 'disconnected';
         this.queueTimeout = queueTimeout || 5000;
         this.reconnectTimeout = reconnectTimeout || 5000;
+
+        // Support SSL based connections
+        // https://help.compose.com/docs/rabbitmq-connecting-to-rabbitmq#section-node-and-rabbitmq
+        if (!this.options.servername) {
+            this.options.servername = url.parse(this.url).hostname;
+        }
 
     }
 
