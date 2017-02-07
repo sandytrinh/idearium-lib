@@ -1,6 +1,6 @@
 # idearium-lib
 
-This document covers how to use the library, for information on how to publish a new version of the library to NPM, [read PUBLISHING.md](PUBLISHING.md).
+This document covers how to use the library, for information on how to publish a new version of the library to NPM, [read PUBLISHING.md](https://github.com/idearium/idearium-lib/blob/master/idearium-lib/PUBLISHING.md).
 
 idearium-lib provides [an API via classes](#api) and [some common uses of those classes](#common).
 
