@@ -16,7 +16,7 @@ describe('class mq.Client', function () {
                 var ideariumMq = new mq.Client();
             };
 
-            expect(fn).to.throw(Error, /url parameter is required/);
+            expect(fn).to.throw(Error, /connectionString parameter is required/);
 
         });
 

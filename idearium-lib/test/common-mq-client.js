@@ -17,7 +17,7 @@ describe('common/mq/client', function () {
         require('../common/config').set('mqUrl', 'amqp://lib:lib@localhost:5672');
 
         // Move the test files into place
-        copy(path.resolve(dir, '..', 'test-data', 'mq-certs'), path.join(dir, 'mq-certs'), done);
+        copy(path.resolve(dir, '..', 'test-data', 'mq-certs'), path.join(dir, 'mq-certs', process.env.NODE_ENV), done);
 
     });
 
@@ -44,6 +44,7 @@ describe('common/mq/client', function () {
                 expect(mqClient.options).to.have.property('key');
                 expect(mqClient.options).to.have.property('cert');
                 expect(mqClient.options).to.have.property('ca');
+                expect(mqClient.options).to.have.property('servername');
                 expect(mqClient.options.ca).to.be.a('array');
 
                 return done();
