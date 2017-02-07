@@ -47,6 +47,22 @@ describe('class Config', function () {
 
         });
 
+        it('should set \'env\' to `process.env.NODE_ENV`', function () {
+
+            var config = new lib.Config(dir);
+
+            expect(config.get('env')).equal(process.env.NODE_ENV);
+
+        });
+
+        it('should set `process.env.NODE_ENV` to `true`', function () {
+
+            var config = new lib.Config(dir);
+
+            expect(config.get(process.env.NODE_ENV)).equal(true);
+
+        });
+
     });
 
     describe('create multiple instance', function () {
