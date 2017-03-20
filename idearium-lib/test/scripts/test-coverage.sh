@@ -7,7 +7,7 @@ if test ! -z "$TRAVIS_BUILD_DIR"; then
 fi
 
 # Make sure RabbitMQ is setup as we need it to be.
-../vagrant/scripts/pretest.sh
+"${WP}/test/scripts/pretest.sh"
 
 # Review code coverage while running the test.
 DEBUG=lib:logger:* "${WP}/node_modules/.bin/istanbul" cover "${WP}/node_modules/.bin/_mocha" -- --trace-deprecation --check-leaks
