@@ -6,7 +6,7 @@ let path = require('path'),
     expect = require('chai').expect,
     copy = require('copy-dir'),
     rimraf = require('rimraf'),
-    dir = path.resolve(__dirname, '..'),
+    dir = path.resolve(__dirname),
     conf = require('./conf');
 
 describe('common/mq/client', function () {
@@ -18,7 +18,7 @@ describe('common/mq/client', function () {
         require('../common/config').set('mqUrl', conf.rabbitUrl);
 
         // Move the test files into place
-        copy(path.resolve(dir, '..', 'test-data', 'mq-certs'), path.join(dir, 'mq-certs', process.env.NODE_ENV), done);
+        copy(path.resolve(dir, 'data', 'mq-certs'), path.join(dir, '..', 'mq-certs', process.env.NODE_ENV), done);
 
     });
 
@@ -63,7 +63,7 @@ describe('common/mq/client', function () {
 
     after(function (done) {
 
-        rimraf(path.join(dir, 'mq-certs'), done);
+        rimraf(path.join(dir, '..', 'mq-certs'), done);
 
     });
 
