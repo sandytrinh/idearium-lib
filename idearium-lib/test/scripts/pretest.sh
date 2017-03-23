@@ -13,7 +13,7 @@ if [ $? -ne 0 ]; then
     docker rm rabbitmq > /dev/null 2>&1
 
     # Let's get it running again.
-    docker run -d --name rabbitmq -p "5672:5672" -e "RABBITMQ_USER=lib" -e "RABBITMQ_PASS=lib" smebberson/alpine-rabbitmq > /dev/null 2>&1
+    docker run -d --name rabbitmq -p "56722:5672" -e "RABBITMQ_USER=lib" -e "RABBITMQ_PASS=lib" smebberson/alpine-rabbitmq > /dev/null 2>&1
 
     echo "RabbitMQ started... sleeping for 10s to allow it to initialize..."
 

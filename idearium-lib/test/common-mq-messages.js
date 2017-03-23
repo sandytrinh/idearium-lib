@@ -5,7 +5,8 @@
 const path = require('path'),
     fs = require('fs'),
     expect = require('chai').expect,
-    dir = path.resolve(__dirname, '..', 'messages');
+    dir = path.resolve(__dirname, '..', 'messages'),
+    conf = require('./conf');
 
 describe('common/mq/messages', function () {
 
@@ -15,7 +16,7 @@ describe('common/mq/messages', function () {
     // Set the mqUrl value as common/mq/client uses it.
     before(function(done) {
 
-        require('../common/config').set('mqUrl', 'amqp://lib:lib@localhost:5672');
+        require('../common/config').set('mqUrl', conf.rabbitUrl);
 
         // Add some fake messages to load.
         fs.mkdir(dir, function (err) {

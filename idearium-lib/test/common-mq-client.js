@@ -6,7 +6,8 @@ let path = require('path'),
     expect = require('chai').expect,
     copy = require('copy-dir'),
     rimraf = require('rimraf'),
-    dir = path.resolve(__dirname, '..');
+    dir = path.resolve(__dirname, '..'),
+    conf = require('./conf');
 
 describe('common/mq/client', function () {
 
@@ -14,7 +15,7 @@ describe('common/mq/client', function () {
     // Set the mqUrl value as common/mq/client uses it.
     before(function(done) {
 
-        require('../common/config').set('mqUrl', 'amqp://lib:lib@localhost:5672');
+        require('../common/config').set('mqUrl', conf.rabbitUrl);
 
         // Move the test files into place
         copy(path.resolve(dir, '..', 'test-data', 'mq-certs'), path.join(dir, 'mq-certs', process.env.NODE_ENV), done);

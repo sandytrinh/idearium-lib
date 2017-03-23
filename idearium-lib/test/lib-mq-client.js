@@ -3,7 +3,8 @@
 /* eslint-env node, mocha */
 
 var expect = require('chai').expect,
-    mq = require('..').mq;
+    mq = require('..').mq,
+    conf = require('./conf');
 
 describe('class mq.Client', function () {
 
@@ -32,7 +33,7 @@ describe('class mq.Client', function () {
             try {
 
                 // Setup an instance of the class.
-                var ideariumMq = new mq.Client('amqp://lib:lib@localhost:5672');
+                var ideariumMq = new mq.Client(conf.rabbitUrl);
 
                 // Add the connect listener. When this happens, we're done.
                 ideariumMq.addListener('connect', function () {
