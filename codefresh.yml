@@ -1,0 +1,20 @@
+version: '1.0'
+
+steps:
+
+  build_image:
+    type: build
+    image_name: idearium-lib
+    working_directory: ./
+    dockerfile:
+      content:
+        FROM
+
+  test_library:
+    title: Test library
+    description: Run unit tests against idearium-lib
+    commands:
+      - docker pull smebberson/alpine-rabbitmq
+      - cd ./idearium-lib
+      - npm install
+      - npm test

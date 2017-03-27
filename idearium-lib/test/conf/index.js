@@ -1,3 +1,3 @@
 module.exports = {
-    'rabbitUrl': 'amqp://lib:lib@localhost:' + process.env.MQ_PORT
+    'rabbitUrl': 'amqp://lib:lib@rabbitmq:5672'
 };

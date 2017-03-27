@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+
+  # Dependency.
+  rabbitmq:
+    image: smebberson/alpine-rabbitmq
+    environment:
+      - RABBITMQ_USER=lib
+      - RABBITMQ_PASS=lib
+
+  # A Node.js image to test `idearium-lib`.
+  lib:
+    build: ./
+    volumes:
+      - ./idearium-lib:/app
+    environment:
+      - NODE_ENV=development
