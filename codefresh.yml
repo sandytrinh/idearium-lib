@@ -16,7 +16,7 @@ steps:
     composition_candidates:
       lib:
         image: '${{BuildingDockerImage}}'
-        command: dockerize -wait tcp://rabbitmq:5672 -timeout 30s npm test
+        command: dockerize -wait tcp://rabbitmq:5672 -timeout 30s npm run test-ci
         environment:
           NODE_ENV: ${{NODE_ENV}}
     on_success:

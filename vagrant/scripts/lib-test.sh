@@ -7,7 +7,7 @@ if [ "$1" = "coverage" ]; then
 fi
 
 # Support `lib-test {anything}` and proxy it to NPM.
-if [ ! -z "$@" ]; then
+if [ $# -ne 0 ]; then
     dc run -w "/app" lib npm "$@"
     exit $?
 fi

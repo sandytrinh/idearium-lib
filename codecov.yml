@@ -1,0 +1,6 @@
+codecov:
+  token: secret:lwFSIPX4b8cnFdjp3DkWkrMLeTDpUA13f2HWFb0mvfngej5/JNHnsqyqTA9LOTE8BzrW6xuVIFkW8lVZcMXQVBSc2MHRYzBpOj+YdfLULiA=
+
+parsers:
+  javascript:
+    enable_partials: yes

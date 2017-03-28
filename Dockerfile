@@ -15,7 +15,8 @@ COPY ./idearium-lib/package.json /app/
 RUN npm install --silent
 
 # Copy across everything else (.dockerignore at play).
-COPY ./idearium-lib /app
+COPY ./idearium-lib ./codecov.yml /app/
+COPY ./.git /app/.git
 
 # Use dockerize to wait for RabbitMQ to be ready.
 # This will help to minimize issues on Codefresh.

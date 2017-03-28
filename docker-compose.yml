@@ -14,6 +14,8 @@ services:
     build: ./
     volumes:
       - ./idearium-lib:/app
+    #   - ./.git/:/app/.git/
+    #   - ./codecov.yml:/app/codecov.yml
     environment:
       - NODE_ENV=development
     depends_on:

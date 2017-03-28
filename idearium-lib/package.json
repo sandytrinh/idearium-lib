@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "./test/scripts/test.sh",
-    "test-coverage": "./test/scripts/test-coverage.sh"
+    "test-coverage": "./test/scripts/test-coverage.sh",
+    "test-ci": "./test/scripts/test-ci.sh"
   },
   "author": "Scott Mebberson",
   "repository": "https://github.com/idearium/idearium-lib.git",
@@ -41,6 +42,7 @@
     "mocha": "2.4.5",
     "rimraf": "2.5.4",
     "supertest": "2.0.1",
-    "test-console": "1.0.0"
+    "test-console": "1.0.0",
+    "codecov": "2.1.0"
   }
 }
