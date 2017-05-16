@@ -1,8 +1,6 @@
 # idearium-lib
 
-[![Build Status](https://travis-ci.org/idearium/idearium-lib.svg?branch=master)](https://travis-ci.org/idearium/idearium-lib)
-[![codecov.io](https://codecov.io/github/idearium/idearium-lib/coverage.svg?branch=master)](https://codecov.io/github/idearium/idearium-lib?branch=master)
-
+[![Codefresh build status]( https://g.codefresh.io/api/badges/build?repoOwner=idearium&repoName=idearium-lib&branch=master&pipelineName=idearium-lib&accountName=smebberson&type=cf-1)]( https://g.codefresh.io/repositories/idearium/idearium-lib/builds?filter=trigger:build;branch:master;service:58d45bc80d3ba3010087a0a8~idearium-lib)
 
 This repository contains `idearium-lib`, which is a Node.js shared library for Idearium applications running on Node.js. Any code that is used across multiple applications (or within multiple Docker containers) should live here.
 
@@ -53,18 +51,9 @@ This repository has a complete test suite, which can be run by:
 - [Guest]   If you've only just restarted the virtual machine, execute `dc up -d`.
 - [Guest]   Then you can execute `lib-test` to run the tests, as many times as you need.
 
-### Code coverage
+### Online unit tests
 
-This repository offers code coverage insights via Istanbul and codecov.io.
-
-Run code coverage insights by:
-
-- [Host]    Execute `vagrant ssh` to be provided with a bash shell within the virtual machine.
-- [Guest]   Get into the `/vagrant` directory, by executing `cd /vagrant`.
-- [Guest]   If you've only just restarted the virtual machine, execute `dc up -d`.
-- [Guest]   Execute `lib-test coverage` to run the tests.
-
-Upon any push to GitHub, Codefresh will run the tests (reviewed at https://travis-ci.org/idearium/idearium-lib) and the code coverage report will be updated (reviewed at https://codecov.io/gh/idearium/idearium-lib).
+Every commit and push of this repository is tested by Codefresh, https://g.codefresh.io/repositories/idearium/idearium-lib.
 
 ### Accessing NPM
 
