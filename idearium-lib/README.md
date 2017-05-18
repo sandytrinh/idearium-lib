@@ -123,7 +123,7 @@ Is the name of the message and should match one of the file names within the `me
 
 An object which will be serialized to JSON and sent through RabbitMQ.
 
-## API
+# API
 
 ```
 let ideariumLib = require('@idearium/idearium-lib');
@@ -138,30 +138,108 @@ ideariumLib.mq.Client;
 ideariumLib.mq.Manager;
 ```
 
-### ideariumLib.Config(dir)
+## ideariumLib.Config(dir)
 
-`ideariumLib.Config` will load config files (`.json` and `config.{process.env.NODE_ENV}.js`) from a provided directory.
+A class used to load in a configuration file, from a particular directory.
 
-```
+`ideariumLib.Config` will load a `config.js` file from a provided directory.
+
+#### Example
+
+```JavaScript
 let config = new ideariumLib.Config(path.resolve(__dirname, '..', 'config'));
 config.get('mqUrl');
 ```
 
-#### dir
+#### Parameters
+
+##### dir*
 
 An absolute path to a directory containing (`.js` and `.json`) configuration files.
 
-### ideariumLib.mq.Client(url)
+### config.get(config)
+
+Used to retrieve the value of a particular configuration.
+
+#### Parameters
+
+##### config*
+
+A string representing a property of the configuration object loaded from the config file.
+
+### config.set(config, value)
+
+Used to set the value of a configuration.
+
+#### Parameters
+
+##### config*
+
+A string representing the name of the configuration.
+
+##### value*
+
+A value for the configuration.
+
+---
+
+## mq.Client(url)
+
+A class used to create a connection to RabbitMQ, with methods to help publish and consume messages.
 
 `ideariumLib.mq.Client` will connect to a running instance of RabbitMQ.
 
 ```
-let ideariumMq = new ideariumLib.mq.Client('amqp://localhost:5672');
+let mqClient = new ideariumLib.mq.Client('amqp://localhost:5672');
 ```
 
-#### url
+##### Parameters
 
-`ideariumLib.mq.Client` must be provided a URL pointing to a running instance of RabbitMQ.
+###### connectionString*
+
+A URL pointing to a running instance of RabbitMQ.
+
+###### options = {}
+
+An object that will be passed to RabbitMQ while connecting.
+
+###### publishConcurrency = 3
+
+An number that determines the number of messages that will be published concurrently.
+
+###### queueTimeout = 5000ms
+
+The amount of time that should pass before re-queueing publish and consumer tasks.
+
+###### reconnectTimeout = 5000ms
+
+The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
+
+### Client.consume(fn)
+
+Used to register a consumer with RabbitMQ.
+
+##### Parameters
+
+###### fn*
+
+A function that will be called, with a new `channel` in which to setup the exchange, queue and consuming function.
+
+_**Please note**_: `fn` must `return` a promise.
+
+### Client.publish(fn)
+
+Used to register a consumer with RabbitMQ.
+
+##### Parameters
+
+###### fn*
+
+A function that will be called, with a new `channel` in which to setup an exchange to publish a message to.
+
+_**Please note**_: `fn` must `return` a promise.
+
+---
 
 ### ideariumLib.Loader
 

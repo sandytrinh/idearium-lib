@@ -1,7 +1,6 @@
 'use strict';
 
 var url = require('url'),
-    when = require('when'),
     async = require('async'),
     debug = require('debug')('idearium-lib:mq-client'),
     Connection = require('./connection');
@@ -102,17 +101,18 @@ class Client extends Connection {
             return cb(new Error('Unable to iterate publisher queue, no connection.'));
         }
 
-        when(this.connection.createChannel())
-        .then((ch) => {
-            // handle channel disconnection error
-            ch.on('error', cb);
-            // execute publish function
-            when(fn(ch))
-            .then(() => ch.close())
-            .then(cb)
-            .otherwise(cb);
-        }, cb)
-        .otherwise(cb);
+        this.connection.createChannel()
+            .then((ch) => {
+
+                // handle channel disconnection error
+                ch.on('error', cb);
+
+                // execute publish function (`fn` returns a function).
+                return fn(ch)
+                    .then(() => ch.close());
+
+            })
+            .catch(cb);
 
     }
 
@@ -183,15 +183,17 @@ class Client extends Connection {
             }
         };
 
-        when(this.connection.createChannel())
-        .then((ch) => {
-            // handle channel disconnection error
-            ch.on('error', cb);
-            // execute consume function
-            when(fn(ch))
-            .otherwise(cb);
-        }, cb)
-        .otherwise(cb);
+        this.connection.createChannel()
+            .then((ch) => {
+
+                // handle channel disconnection error
+                ch.on('error', cb);
+
+                // execute consume function (`fn` returns a promise)
+                return fn(ch);
+
+            })
+            .catch(cb);
 
     }
 
