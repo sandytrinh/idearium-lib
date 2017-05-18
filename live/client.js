@@ -123,14 +123,14 @@ mqClient.on('connect', () => {
         console.log(data);
 
         rpcPublish(connection, channel, consumerQueue, 'server_queue', data)
-        .then((result) => {
+            .then((result) => {
 
-            console.log('\nGot a response...');
-            console.log(JSON.parse(result.content.toString()));
-            console.log('\n--');
+                console.log('\nGot a response...');
+                console.log(JSON.parse(result.content.toString()));
+                console.log('\n--');
 
-        })
-        .catch((err) => console.error(err));
+            })
+            .catch((err) => console.error(err));
 
         // Do this again soon.
         setTimeout(publish, timeoutMs);

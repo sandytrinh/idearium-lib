@@ -1,15 +1,14 @@
 'use strict';
 
-var config = require('../config'),
-    mq = require('../../lib/mq'),
+var mq = require('../../lib/mq'),
     certs = require('./certs');
 
 /**
- * A common implement of mq.Client to be used across many clients.
+ * A common implement of mq.RPC to be used across many clients.
  */
-class Client extends mq.Client {
+class RPC extends mq.RPC {
 
-    constructor(url) {
+    constructor(url, type, name) {
 
         // Make sure we have a URL to connect to RabbitMQ.
         if (!url) {
@@ -17,22 +16,30 @@ class Client extends mq.Client {
         }
 
         // Configure the MqClient class.
-        super(url);
+        super(url, type, name);
 
         // We'll customise the reconnection strategy from MqClient.
         this.reconnectCount = 0;
 
         // Once the certs have loaded, we'll update the options and connect.
         certs.
-            then((optionsCerts) => {
+            then(this.makeConnection.bind(this));
 
-                // Update options (for RabbitMQ connection) without certs.
-                Object.assign(this.options, optionsCerts);
+    }
 
-                // Connect even if there was an ENOENT error.
-                return this.connect();
+    /**
+     * This is merge the optionsCerts argument into this.options and
+     * attempt to make a connection to Rabbit.
+     * @param  {Object} optionsCerts Any certs required for connection.
+     * @return Void
+     */
+    makeConnection (optionsCerts) {
 
-            });
+        // Update options (for RabbitMQ connection) without certs.
+        Object.assign(this.options, optionsCerts || {});
+
+        // Connect even if there was an ENOENT error.
+        this.connect();
 
     }
 
@@ -57,4 +64,4 @@ class Client extends mq.Client {
 
 }
 
-module.exports = new Client(config.get('mqUrl'));
+module.exports = RPC;

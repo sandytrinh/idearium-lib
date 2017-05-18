@@ -102,17 +102,35 @@ class Client extends Connection {
             return cb(new Error('Unable to iterate publisher queue, no connection.'));
         }
 
-        when(this.connection.createChannel())
+        this.connection.createChannel()
         .then((ch) => {
+
             // handle channel disconnection error
             ch.on('error', cb);
+
             // execute publish function
             when(fn(ch))
             .then(() => ch.close())
             .then(cb)
+            .catch(cb)
             .otherwise(cb);
-        }, cb)
-        .otherwise(cb);
+
+        })
+        .catch(cb);
+
+        // when(this.connection.createChannel())
+        // .then((ch) => {
+        //     // handle channel disconnection error
+        //     ch.on('error', cb);
+        //     // execute publish function
+        //     when(fn(ch))
+        //     .then(() => ch.close())
+        //     .then(cb)
+        //     .catch(cb)
+        //     .otherwise(cb);
+        // }, cb)
+        // .catch(cb)
+        // .otherwise(cb);
 
     }
 
@@ -147,7 +165,7 @@ class Client extends Connection {
 
         // add to this queue, this queue will be used to re-register the consumers when connection failed
         this.consumerQueue.push(fn);
-        this.registerConsumer(fn);
+        return this.registerConsumer(fn);
 
     }
 
@@ -174,24 +192,30 @@ class Client extends Connection {
             return this.connect();
         }
 
-        var cb = (err) => {
+        const cb = (err) => {
+
             if (err) {
                 this.logError(err);
                 debug('Unable to register a consumer, re-queue consumer in ' + this.queueTimeout / 1000 + 's');
                 // re-queue in 5 seconds
-                setTimeout(() => { this.registerConsumer(fn); }, this.queueTimeout);
+                setTimeout(() => this.registerConsumer(fn), this.queueTimeout);
             }
+
         };
 
-        when(this.connection.createChannel())
-        .then((ch) => {
-            // handle channel disconnection error
-            ch.on('error', cb);
-            // execute consume function
-            when(fn(ch))
-            .otherwise(cb);
-        }, cb)
-        .otherwise(cb);
+        return this.connection.createChannel()
+            .then((ch) => {
+
+                // handle channel disconnection error
+                ch.on('error', cb);
+
+                // execute consume function
+                when(fn(ch))
+                .catch(cb)
+                .otherwise(cb);
+
+            })
+            .catch(cb);
 
     }
 

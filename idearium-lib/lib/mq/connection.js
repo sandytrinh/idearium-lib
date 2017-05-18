@@ -50,33 +50,63 @@ class Connection extends EventEmitter {
 
         debug(`Attempting to connect at ${this.url}`);
 
-        when(amqp.connect(this.url, this.options))
+        return amqp.connect(this.url, this.options)
         .then((conn) => {
 
             this.connection = conn;
 
             // handle disconnection error
-            conn.on('error', (err) => {
-                debug('Disconnected!');
-                this.logError(err);
-                this.reconnect();
-                this.emit('error', err);
-            });
+            conn.on('error', this.disconnected);
 
             debug('Connected');
             this.state = 'connected';
             this.emit('connect');
 
-        }, (err) => {
-            debug('Unable to connect!');
-            this.logError(err);
-            this.reconnect();
-            this.emit('error', err);
         })
-        .otherwise((err) => {
-            debug('Unexpected error.');
-            throw err;
+        .catch((err) => {
+
+            debug('Unable to connect!');
+
+            // Log the error.
+            this.logError(err);
+            this.emit('error', err);
+
+            // Try and connect again.
+            this.reconnect();
+
         });
+
+        // when(amqp.connect(this.url, this.options))
+        // .then((conn) => {
+        //
+        //     this.connection = conn;
+        //
+        //     // handle disconnection error
+        //     conn.on('error', (err) => {
+        //         debug('Disconnected!');
+        //         this.logError(err);
+        //         this.reconnect();
+        //         this.emit('error', err);
+        //     });
+        //
+        //     debug('Connected');
+        //     this.state = 'connected';
+        //     this.emit('connect');
+        //
+        // }, (err) => {
+        //     debug('Unable to connect!');
+        //     this.logError(err);
+        //     this.reconnect();
+        //     this.emit('error', err);
+        // })
+        // .catch((err) => {
+        //     debug('Unexpected error.');
+        //     throw err;
+        // })
+        // .otherwise((err) => {
+        //     debug('Unexpected error.');
+        //     throw err;
+        // });
 
     }
 
@@ -105,10 +135,29 @@ class Connection extends EventEmitter {
         }
 
         debug('Disconnecting...');
-        this.connection.close().then(() => {
-            debug('Disconnected.');
-            this.state = 'disconnected';
-        });
+
+        return this.connection.close()
+            .then(() => {
+                debug('Disconnected.');
+                this.state = 'disconnected';
+            })
+            .catch(this.handleCatch);
+
+    }
+
+    disconnected (err) {
+
+        debug('Disconnected!');
+
+        // Update the state.
+        this.state = 'disconnected';
+
+        // Handle the error.
+        this.logError(err);
+        this.emit('error', err);
+
+        // Because this wasn't a requested disconnection, try a reconnect.
+        this.reconnect();
 
     }
 
@@ -120,6 +169,11 @@ class Connection extends EventEmitter {
         // log error logics here
         // eslint-disable-next-line no-console
         console.error(err);
+    }
+
+    handleCatch (err) {
+        console.log('>>>>>>>>>>>>>>>>>>>');
+        throw err;
     }
 
 }

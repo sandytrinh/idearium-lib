@@ -2,7 +2,7 @@
 
 # Support `lib-test coverage`.
 if [ "$1" = "coverage" ]; then
-    dc run -w "/app" lib npm run test-coverage
+    dc run -w "/app" lib LOG_LEVEL=debug DEBUG=idearium-lib:* npm run test-coverage
     exit $?
 fi
 

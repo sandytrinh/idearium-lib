@@ -57,7 +57,7 @@ describe('common/mq/messages', function () {
         // Recreate the consume function.
         message.consume = function consumeTest () {
 
-            mqClient.consume((channel) => {
+            return mqClient.consume((channel) => {
 
                 var processMessage = (msg) => {
 
@@ -104,7 +104,7 @@ describe('common/mq/messages', function () {
         message.publish = function publishTest (data) {
 
             // Publish anything we receive into RabbitMQ.
-            mqClient.publish((channel) => {
+            return mqClient.publish((channel) => {
 
                 // create exchange, durable make sure exchange will persist to disk
                 return channel.assertExchange(exchange, 'fanout', { durable: true })

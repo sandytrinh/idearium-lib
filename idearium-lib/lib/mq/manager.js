@@ -29,7 +29,7 @@ class Manager extends EventEmitter {
     load () {
 
         // Let's attempt to the messages in straight away.
-        this.loader.load(this.path).then((messages) => {
+        return this.loader.load(this.path).then((messages) => {
 
             // Add the messages to our class instance.
             this.messages = messages;

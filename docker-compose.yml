@@ -8,6 +8,8 @@ services:
     environment:
       - RABBITMQ_USER=lib
       - RABBITMQ_PASS=lib
+      - RABBITMQ_ENABLE_MANAGEMENT_PLUGIN=true
+      - RABBITMQ_MGMT_PORT=15673
 
   # A Node.js image to test `idearium-lib`.
   lib:
