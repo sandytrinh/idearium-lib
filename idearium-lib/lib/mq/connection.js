@@ -3,7 +3,6 @@
 var url = require('url'),
     EventEmitter = require('events').EventEmitter,
     amqp = require('amqplib'),
-    when = require('when'),
     debug = require('debug')('idearium-lib:mq-client');
 
 class Connection extends EventEmitter {
@@ -43,40 +42,47 @@ class Connection extends EventEmitter {
     connect() {
 
         if (this.state === 'connected' || this.state === 'connecting') {
-            return;
+            return null;
         }
 
         this.state = 'connecting';
 
         debug(`Attempting to connect at ${this.url}`);
-
-        when(amqp.connect(this.url, this.options))
-        .then((conn) => {
-
-            this.connection = conn;
-
-            // handle disconnection error
-            conn.on('error', (err) => {
-                debug('Disconnected!');
+        return amqp.connect(this.url, this.options)
+            .then((conn) => {
+                this.connected(conn);
+            })
+            .catch((err) => {
+                debug('Unable to connect!');
                 this.logError(err);
                 this.reconnect();
                 this.emit('error', err);
             });
 
-            debug('Connected');
-            this.state = 'connected';
-            this.emit('connect');
+    }
 
-        }, (err) => {
-            debug('Unable to connect!');
+    /**
+     * Executed once connected with the connection.
+     * @param  {Object} conn A connection object.
+     * @return Void
+     */
+    connected(conn) {
+
+        this.connection = conn;
+
+        // handle disconnection error
+        conn.on('error', (err) => {
+
+            debug('Disconnected!');
             this.logError(err);
             this.reconnect();
             this.emit('error', err);
-        })
-        .otherwise((err) => {
-            debug('Unexpected error.');
-            throw err;
+
         });
+
+        debug('Connected');
+        this.state = 'connected';
+        this.emit('connect');
 
     }
 
@@ -90,7 +96,8 @@ class Connection extends EventEmitter {
         debug('Reconnect in %ds', timeout / 1000);
         this.state = 'disconnected';
 
-        setTimeout(() => this.connect(), timeout);
+        return this.delay(timeout)
+            .then(() => this.connect());
 
     }
 
@@ -105,10 +112,12 @@ class Connection extends EventEmitter {
         }
 
         debug('Disconnecting...');
-        this.connection.close().then(() => {
-            debug('Disconnected.');
-            this.state = 'disconnected';
-        });
+
+        return this.connection.close()
+            .then(() => {
+                debug('Disconnected.');
+                this.state = 'disconnected';
+            });
 
     }
 
@@ -120,6 +129,15 @@ class Connection extends EventEmitter {
         // log error logics here
         // eslint-disable-next-line no-console
         console.error(err);
+    }
+
+    /**
+     * A promise based variant of setTimeout.
+     * @param  {Number} t The number of milliseconds to delay.
+     * @return Promise    A promise which will be resolved once the timeout is complete.
+     */
+    delay(t) {
+        return new Promise((resolve) => setTimeout(resolve, t));
     }
 
 }
