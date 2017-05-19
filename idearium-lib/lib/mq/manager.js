@@ -1,7 +1,6 @@
 'use strict';
 
-var path = require('path'),
-    EventEmitter = require('events').EventEmitter,
+var EventEmitter = require('events').EventEmitter,
     Loader = require('../loader');
 
 class Manager extends EventEmitter {
