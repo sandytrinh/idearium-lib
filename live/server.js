@@ -3,7 +3,7 @@
 'use strict';
 
 const config = require('../idearium-lib/common/config');
-const RPC = require('../idearium-lib/common/mq/rpc');
+const RpcServer = require('../idearium-lib/common/mq/rpc');
 
 /**
  * A function that given a channel, will return another function to process a message.
@@ -25,4 +25,4 @@ const reply = (msg, callback) => {
 };
 
 // eslint-disable-next-line no-unused-vars
-const rpc = new RPC(config.get('mqUrl'), 'server', { name: 'server_queue', callback: reply });
+const rpc = new RpcServer(config.get('mqUrl'), 'server_queue', reply);
