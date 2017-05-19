@@ -136,6 +136,7 @@ ideariumLib.Config;
 ideariumLib.Loader;
 ideariumLib.mq.Client;
 ideariumLib.mq.Manager;
+ideariumLib.mq.RpcServer;
 ```
 
 ## ideariumLib.Config(dir)
@@ -238,6 +239,38 @@ Used to register a consumer with RabbitMQ.
 A function that will be called, with a new `channel` in which to setup an exchange to publish a message to.
 
 _**Please note**_: `fn` must `return` a promise.
+
+---
+
+## mq.RpcServer(connectionString, name, callback, options = {}, reconnectTimeout = 5000)
+
+A class used to create a connection to RabbitMQ and setup and RPC server ready to process incoming messages based on `options.name`.
+
+```
+let mqRpcServer = new ideariumLib.mq.RpcServer('amqp://localhost:5672', { name: 'rpc_process_queue' });
+```
+
+##### Parameters
+
+###### connectionString*
+
+A URL pointing to a running instance of RabbitMQ.
+
+###### name*
+
+An object that will be passed to RabbitMQ while connecting. You should also use it to pass the name of the RPC server queue.
+
+###### callback*
+
+An callback function that will be executed when there is a message to process. The callback will be given a `done` function as the first argument which should be called by the process function with a result to return to the RPC client.
+
+###### options = {}
+
+An object that will be passed to RabbitMQ while connecting.
+
+###### reconnectTimeout = 5000ms
+
+The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
 
 ---
 

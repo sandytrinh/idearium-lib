@@ -6,7 +6,7 @@ var expect = require('chai').expect,
     mq = require('..').mq,
     conf = require('./conf');
 
-describe('class mq.RPC', function () {
+describe('class mq.RpcServer', function () {
 
     describe('will throw an Error', function () {
 
@@ -14,21 +14,32 @@ describe('class mq.RPC', function () {
 
             var fn = function () {
                 // eslint-disable-next-line no-unused-vars
-                var ideariumMq = new mq.RPC();
+                var ideariumMq = new mq.RpcServer();
             };
 
             expect(fn).to.throw(Error, /connectionString parameter is required/);
 
         });
 
-        it('if type === server and name is not provided', function () {
+        it('if name is not provided', function () {
 
             var fn = function () {
                 // eslint-disable-next-line no-unused-vars
-                var ideariumMq = new mq.RPC(conf.rabbitUrl, "server");
+                var ideariumMq = new mq.RpcServer(conf.rabbitUrl);
             };
 
-            expect(fn).to.throw(Error, /You must supply an RPC name in the options object, when type is server/);
+            expect(fn).to.throw(Error, /You must supply an RPC name/);
+
+        });
+
+        it('if callback is not provided', function () {
+
+            var fn = function () {
+                // eslint-disable-next-line no-unused-vars
+                var ideariumMq = new mq.RpcServer(conf.rabbitUrl, 'test_name');
+            };
+
+            expect(fn).to.throw(Error, /You must supply a callback function/);
 
         });
 
@@ -47,7 +58,7 @@ describe('class mq.RPC', function () {
             try {
 
                 // Setup an instance of the class.
-                var ideariumRPC = new mq.RPC(conf.rabbitUrl, 'server', { name, callback });
+                var ideariumRPC = new mq.RpcServer(conf.rabbitUrl, name, callback);
 
                 // Add the connect listener. When this happens, we're done.
                 ideariumRPC.addListener('channel', () => {

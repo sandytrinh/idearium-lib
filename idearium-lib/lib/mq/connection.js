@@ -9,11 +9,11 @@ class Connection extends EventEmitter {
 
     /**
      * Constructor function
-     * @param  {String} url                Rabbitmq server url
+     * @param  {String} connectionString   Rabbitmq server url
      * @param  {Object} options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
      * @param  {Number} reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
      */
-    constructor(connectionString, options, reconnectTimeout) {
+    constructor(connectionString, options = {}, reconnectTimeout = 5000) {
 
         if (!connectionString) {
             throw new Error('connectionString parameter is required');
@@ -23,10 +23,10 @@ class Connection extends EventEmitter {
         super();
 
         this.url = connectionString;
-        this.options = options || {};
+        this.options = options;
+        this.reconnectTimeout = reconnectTimeout;
         this.connection = null;
         this.state = 'disconnected';
-        this.reconnectTimeout = reconnectTimeout || 5000;
 
         // Support SSL based connections
         // https://help.compose.com/docs/rabbitmq-connecting-to-rabbitmq#section-node-and-rabbitmq
@@ -48,15 +48,24 @@ class Connection extends EventEmitter {
         this.state = 'connecting';
 
         debug(`Attempting to connect at ${this.url}`);
+
         return amqp.connect(this.url, this.options)
-            .then((conn) => {
-                this.connected(conn);
-            })
+            .then(conn => this.connected(conn))
             .catch((err) => {
-                debug('Unable to connect!');
-                this.logError(err);
-                this.reconnect();
-                this.emit('error', err);
+
+                // This is a bit ugly, but when connecting to RabbitMQ (with SSL)
+                // older versions can throw some weird errors.
+                // This tidies up a really persistent one that seems to happen on every connect.
+                if (err.message && !err.message.startsWith('socket hang up')) {
+
+                    debug('Unable to connect!');
+                    this.logError(err);
+                    this.emit('error', err);
+
+                }
+
+                return this.reconnect();
+
             });
 
     }
@@ -75,12 +84,14 @@ class Connection extends EventEmitter {
 
             debug('Disconnected!');
             this.logError(err);
-            this.reconnect();
             this.emit('error', err);
+
+            return this.reconnect();
 
         });
 
         debug('Connected');
+
         this.state = 'connected';
         this.emit('connect');
 
@@ -138,6 +149,15 @@ class Connection extends EventEmitter {
      */
     delay(t) {
         return new Promise((resolve) => setTimeout(resolve, t));
+    }
+
+    /**
+     * Given an error from a `.catch`, throw it.
+     * @param  {error} err The Error object to throw.
+     * @return Void
+     */
+    handleCatch (err) {
+        throw err;
     }
 
 }

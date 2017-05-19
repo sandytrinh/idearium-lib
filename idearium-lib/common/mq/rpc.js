@@ -6,17 +6,27 @@ var mq = require('../../lib/mq'),
 /**
  * A common implement of mq.RPC to be used across many clients.
  */
-class RPC extends mq.RPC {
+class RpcServer extends mq.RpcServer {
 
-    constructor(url, type, name) {
+    constructor(url, name, callback) {
 
         // Make sure we have a URL to connect to RabbitMQ.
         if (!url) {
             throw new Error('The RabbitMQ connection url must be provided.');
         }
 
+        // Make sure we have a URL to connect to RabbitMQ.
+        if (!name) {
+            throw new Error('The RabbitMQ server queue name must be provided.');
+        }
+
+        // Make sure we have a callback.
+        if (!callback) {
+            throw new Error('A callback function must be provided.');
+        }
+
         // Configure the MqClient class.
-        super(url, type, name);
+        super(url, name, callback);
 
         // We'll customise the reconnection strategy from MqClient.
         this.reconnectCount = 0;
@@ -64,4 +74,4 @@ class RPC extends mq.RPC {
 
 }
 
-module.exports = RPC;
+module.exports = RpcServer;
