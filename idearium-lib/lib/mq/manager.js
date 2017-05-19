@@ -29,7 +29,7 @@ class Manager extends EventEmitter {
     load () {
 
         // Let's attempt to the messages in straight away.
-        this.loader.load(this.path).then((messages) => {
+        return this.loader.load(this.path).then((messages) => {
 
             // Add the messages to our class instance.
             this.messages = messages;
@@ -64,15 +64,9 @@ class Manager extends EventEmitter {
 
         var messages = this.messages;
 
-        Object.keys(messages).forEach(function (messageName) {
-
-            if (!messages[messageName].consume) {
-                return;
-            }
-
-            messages[messageName].consume();
-
-        });
+        return Promise.all(Object.keys(messages)
+            .filter(messageName => messages[messageName].consume !== undefined)
+            .map(messageName => messages[messageName].consume()));
 
     }
 
