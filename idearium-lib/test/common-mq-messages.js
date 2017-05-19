@@ -26,7 +26,7 @@ describe('common/mq/messages', function () {
                 return done(err);
             }
 
-            fs.writeFile(path.join(dir, 'test.js'), 'module.exports = { "consume": function () {}, "publish": function () {} };', function (writeErr) {
+            fs.writeFile(path.join(dir, 'test.js'), 'module.exports = { "consume": () => Promise.resolve(), "publish": () => Promise.resolve() };', function (writeErr) {
 
                 if (writeErr) {
                     return done(writeErr);
@@ -126,12 +126,6 @@ describe('common/mq/messages', function () {
             // Wait until everything is loaded.
             mqMessages.addListener('load', () => {
 
-                // Run this manually, as it will have already run once.
-                mqMessages.registerConsumers();
-
-                // Restart the RabbitMQ connection so that our new consumer is registered.
-                mqClient.reconnect();
-
                 // Wait until everything is connected again.
                 mqClient.addListener('connect', function () {
 
@@ -142,6 +136,10 @@ describe('common/mq/messages', function () {
 
                 // Handle any errors.
                 mqClient.addListener('error', done);
+
+                // Run this manually, as it will have already run once.
+                return mqMessages.registerConsumers()
+                    .then(() => mqClient.reconnect());
 
             });
 
