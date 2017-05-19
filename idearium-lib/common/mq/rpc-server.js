@@ -1,6 +1,7 @@
 'use strict';
 
 var mq = require('../../lib/mq'),
+    config = require('../config'),
     certs = require('./certs');
 
 /**
@@ -8,11 +9,11 @@ var mq = require('../../lib/mq'),
  */
 class RpcServer extends mq.RpcServer {
 
-    constructor(url, name, callback) {
+    constructor(name, callback) {
 
         // Make sure we have a URL to connect to RabbitMQ.
-        if (!url) {
-            throw new Error('The RabbitMQ connection url must be provided.');
+        if (!config.get('mqUrl')) {
+            throw new Error('The RabbitMQ connection url must be provided in an environment variable called mqUrl.');
         }
 
         // Make sure we have a URL to connect to RabbitMQ.
@@ -26,7 +27,7 @@ class RpcServer extends mq.RpcServer {
         }
 
         // Configure the MqClient class.
-        super(url, name, callback);
+        super(config.get('mqUrl'), name, callback);
 
         // We'll customise the reconnection strategy from MqClient.
         this.reconnectCount = 0;

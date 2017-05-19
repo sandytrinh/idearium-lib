@@ -115,6 +115,19 @@ require('@idearium/idearium-lib/common/mq/messages').publish(messageName, data);
 
 Will publish a message to RabbitMQ.
 
+### common/mq/rpc-server
+
+`common/mq/rpc-server` will create a connection to RabbitMQ assuming a configuration property `mqUrl` exists providing the URL in which to connect to RabbitMQ.
+
+```
+const RpcServer = require('@idearium/idearium-lib/common/mq/rpc-server');
+const rpcServer = new RpcServer('rpc_name', () => {});
+```
+
+`common/mq/rpc-server` returns a class `RpcServer` which extends `mq.RpcServer`. You must provided it the name of the RPC, and callback function will be executed with a message to process.
+
+The callback function with be passed `done`, which should be called with the results as the first argument to be returned to the RPC consumer.
+
 #### messageName
 
 Is the name of the message and should match one of the file names within the `messages` directory.
