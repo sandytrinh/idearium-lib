@@ -3,7 +3,7 @@
 var url = require('url'),
     EventEmitter = require('events').EventEmitter,
     amqp = require('amqplib'),
-    debug = require('debug')('idearium-lib:mq-client');
+    debug = require('debug')('idearium-lib:mq-connection');
 
 class Connection extends EventEmitter {
 
@@ -117,12 +117,21 @@ class Connection extends EventEmitter {
      */
     disconnect() {
 
+        const DISCONNECTING = 'disconnecting';
+
         if (!this.connection) {
             debug('Not connected.');
             return;
         }
 
+        // If we're already disconnecting, just ignore this.
+        if (this.state === DISCONNECTING) {
+            return;
+        }
+
         debug('Disconnecting...');
+
+        this.state = DISCONNECTING;
 
         return this.connection.close()
             .then(() => {
