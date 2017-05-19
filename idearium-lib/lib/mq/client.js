@@ -51,11 +51,12 @@ class Client extends Connection {
      */
     reconnect(timeout) {
 
-        // Super functionality.
-        super.reconnect(timeout);
-
         // Pause the queue for now.
         this.pausePublisherQueue();
+
+        // Super functionality.
+        return super.reconnect(timeout);
+
 
     }
 
@@ -125,10 +126,14 @@ class Client extends Connection {
         this.publisherQueue.push(fn, (err) => {
 
             if (err) {
+
                 this.logError(err);
+
                 debug('Unable to register a publisher, re-queue publisher in ' + this.queueTimeout / 1000 + 's');
-                // re-queue in 5 seconds
-                setTimeout(() => { this.publish(fn); }, this.queueTimeout);
+
+                return this.delay(this.queueTimeout)
+                    .then(() => this.publish(fn));
+
             }
 
         });
@@ -147,7 +152,7 @@ class Client extends Connection {
 
         // add to this queue, this queue will be used to re-register the consumers when connection failed
         this.consumerQueue.push(fn);
-        this.registerConsumer(fn);
+        return this.registerConsumer(fn);
 
     }
 
@@ -156,11 +161,9 @@ class Client extends Connection {
      */
     registerConsumers() {
 
-        this.consumerQueue.forEach((fn) => {
-            this.registerConsumer(fn);
-        });
+        debug('Registering %d consumers', this.consumerQueue.length);
 
-        debug('Registered %d consumers', this.consumerQueue.length);
+        return Promise.all(this.consumerQueue.map(fn => this.registerConsumer(fn)));
 
     }
 
@@ -175,15 +178,21 @@ class Client extends Connection {
         }
 
         var cb = (err) => {
+
             if (err) {
+
                 this.logError(err);
+
                 debug('Unable to register a consumer, re-queue consumer in ' + this.queueTimeout / 1000 + 's');
-                // re-queue in 5 seconds
-                setTimeout(() => { this.registerConsumer(fn); }, this.queueTimeout);
+
+                return this.delay(this.queueTimeout)
+                    .then(() => this.registerConsumer(fn));
+
             }
+
         };
 
-        this.connection.createChannel()
+        return this.connection.createChannel()
             .then((ch) => {
 
                 // handle channel disconnection error
