@@ -2,10 +2,7 @@
 
 'use strict';
 
-const uuid = require('uuid');
-const mqClient = require('../idearium-lib/common/mq/client');
-
-const promises = {};
+const rpc = require('../idearium-lib/common/mq/rpc-client');
 
 /**
  * Used to return a random number of ms, between 5000 and 15000.
@@ -13,100 +10,13 @@ const promises = {};
  */
 const timeoutValue = () => Math.floor(500 + Math.random()*500);
 
-// This function will map correlationIds to promises;
-const rpcManager = (channel, consumerQueue, publishQueue, correlationId, data, resolve, reject) => {
-
-    // Allow 2000 milliseconds for the RPC to work.
-    const timeoutId = setTimeout(() => {
-        reject(new Error('RPC timed out.'))
-    }, 2000);
-
-    promises[correlationId] = { resolve, reject, timeoutId };
-
-    // Send a message to the server
-    channel.sendToQueue(publishQueue, new Buffer(JSON.stringify(data)), {
-        correlationId,
-        replyTo: consumerQueue.queue
-    });
-
-}
-
-const rpcPublish = (connection, channel, consumerQueue, publishQueue, data) => new Promise((resolve, reject) => rpcManager(channel, consumerQueue, publishQueue, uuid.v4(), data, resolve, reject))
-
-const rpcConsume = (channel, consumerQueue) => {
-
-    // Consume the response.
-    channel.consume(consumerQueue.queue, (msg) => {
-
-        const correlation = promises[msg.properties.correlationId];
-
-        if (!correlation) {
-            console.log('No correlationId found.');
-            return;
-        }
-
-        // Clear the timeout.
-        clearTimeout(correlation.timeoutId);
-
-        // Delete the correlation because we've resolve it.
-        delete promises[msg.properties.correlationId];
-
-        // Resolve the promise
-        correlation.resolve(msg);
-
-    }, {
-        noAck: true
-    });
-
-};
-
-/**
- * A function that will be executed once we have a connection.
- * It will start an RPC server ready to respond to incoming RPC messages.
- * @return Void
- */
-const setup = () => {
-
-    return new Promise((resolve, reject) => {
-
-        let channel;
-        let consumerQueue;
-
-        mqClient.connection.createChannel()
-            .then((ch) => {
-
-                channel = ch;
-                return ch.assertQueue('', { exclusive: true });
-
-            })
-            .then((q) => {
-
-                consumerQueue = q;
-
-                resolve({
-                    channel,
-                    consumerQueue
-                });
-
-                rpcConsume(channel, consumerQueue);
-
-            })
-            .catch(reject);
-
-    });
-
-}
-
 // Announce errors.
-mqClient.on('error', console.error);
+rpc.on('error', console.error);
 
-// Wait until we have a connection.
-mqClient.on('connect', () => {
+// Wait until we have a queue.
+rpc.on('queue', () => {
 
-    let connection = mqClient.connection;
-    let channel;
-    let consumerQueue;
-
+    // Used to continually publish messages and console.log responses for testing.
     const publish = () => {
 
         const timeoutMs = timeoutValue();
@@ -122,7 +32,7 @@ mqClient.on('connect', () => {
         console.log('\nSent: ');
         console.log(data);
 
-        rpcPublish(connection, channel, consumerQueue, 'server_queue', data)
+        rpc.publish('server_queue', data)
             .then((result) => {
 
                 console.log('\nGot a response...');
@@ -137,19 +47,6 @@ mqClient.on('connect', () => {
 
     }
 
-    // Setup the persistant channel and queue.
-    setup()
-        .then((r) => {
-
-            channel = r.channel;
-            consumerQueue = r.consumerQueue;
-
-            publish();
-
-        })
-        .catch(console.error);
+    publish();
 
 });
-
-// Connect to MQ
-mqClient.connect();
