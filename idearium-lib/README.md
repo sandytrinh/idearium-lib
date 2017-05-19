@@ -128,13 +128,17 @@ const rpcServer = new RpcServer('rpc_name', () => {});
 
 The callback function with be passed `done`, which should be called with the results as the first argument to be returned to the RPC consumer.
 
-#### messageName
+### common/mq/rpc-client
 
-Is the name of the message and should match one of the file names within the `messages` directory.
+`common/mq/rpc-client` will create a connection to RabbitMQ assuming a configuration property `mqUrl` exists providing the URL in which to connect to RabbitMQ.
 
-#### data
+```
+const rpcClient = require('@idearium/idearium-lib/common/mq/rpc-client');
+```
 
-An object which will be serialized to JSON and sent through RabbitMQ.
+`common/mq/rpc-client` returns an instance of `mq.rpcClient`. With the instance you can call `mq.rpcClient.publish` with the name of the RPC you want to call as the first argument and the data you want to send to the RPC as the second argument.
+
+A promise will be returned which will be resolved with the result of the RPC.
 
 # API
 
@@ -150,6 +154,7 @@ ideariumLib.Loader;
 ideariumLib.mq.Client;
 ideariumLib.mq.Manager;
 ideariumLib.mq.RpcServer;
+ideariumLib.mq.RpcClient;
 ```
 
 ## ideariumLib.Config(dir)
@@ -260,7 +265,7 @@ _**Please note**_: `fn` must `return` a promise.
 A class used to create a connection to RabbitMQ and setup and RPC server ready to process incoming messages based on `options.name`.
 
 ```
-let mqRpcServer = new ideariumLib.mq.RpcServer('amqp://localhost:5672', { name: 'rpc_process_queue' });
+let mqRpcServer = new ideariumLib.mq.RpcServer('amqp://localhost:5672', 'rpc_process_queue', () => {}));
 ```
 
 ##### Parameters
@@ -284,6 +289,44 @@ An object that will be passed to RabbitMQ while connecting.
 ###### reconnectTimeout = 5000ms
 
 The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
+
+---
+
+## mq.RpcClient(connectionString, options = {}, reconnectTimeout = 5000)
+
+A class used to create a connection to RabbitMQ and setup an RPC client, ready to call RPCs. You should use this class to create a singleton for your application.
+
+```
+let rpcClient = new ideariumLib.mq.RpcClient('amqp://localhost:5672');
+```
+
+##### Parameters
+
+###### connectionString*
+
+A URL pointing to a running instance of RabbitMQ.
+
+###### options = {}
+
+An object that will be passed to RabbitMQ while connecting.
+
+###### reconnectTimeout = 5000ms
+
+The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
+
+### rpcClient.publish(name, data)
+
+Used to call an RPC via RabbitMQ, with some data to process and return a response.
+
+##### Parameters
+
+###### name*
+
+The name of the RPC to call with the data.
+
+###### data*
+
+The data to send to the RPC to process.
 
 ---
 

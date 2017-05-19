@@ -1,7 +1,7 @@
 'use strict';
 
 var Connection = require('./connection'),
-    debug = require('debug')('idearium-lib:mq-rpc');
+    debug = require('debug')('idearium-lib:mq-rpc-server');
 
 class RpcServer extends Connection {
 
@@ -45,8 +45,6 @@ class RpcServer extends Connection {
      */
     setupRpc () {
 
-        console.log('setup RPC');
-
         // Create a channel.
         return this.connection.createChannel()
             .then((ch) => {
@@ -74,7 +72,6 @@ class RpcServer extends Connection {
             .catch((err) => {
 
                 if (err.message !== 'Connection closing') {
-                    console.log('asdfasdfasdf');
                     throw err;
                 }
 
