@@ -2,6 +2,16 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## Unreleased
+
+- **Breaking change**: `mq.Client().consume` now expects a Promise to be returned.
+- `mq.Client().publish` now expects a Promise to be returned.
+- The connection based code from `mq.Client` has been moved out into `mq.Connection`.
+- The certificate loading code from `common/mq/client` has been moved out into `common/mq/certs`.
+- Refactored `mq.Client` to make better use of Promises.
+- Refactored `mq.Manager` to make better use of Promises.
+- `mq.RpcServer` and `mq.RpcClient` have been created to facilitate RPC based messaging.
+
 ## 1.0.0-alpha.8
 
 - You can now use `config.get('env')` to retrieve the value of `process.env.NODE_ENV`.
