@@ -132,6 +132,8 @@ The callback function with be passed `done`, which should be called with the res
 
 `common/mq/rpc-client` will create a connection to RabbitMQ assuming a configuration property `mqUrl` exists providing the URL in which to connect to RabbitMQ.
 
+You can set a configuration property of `mqRpcClientTimeout` to customise the timeout value from the default of 5000 to whatever you like.
+
 ```
 const rpcClient = require('@idearium/idearium-lib/common/mq/rpc-client');
 ```

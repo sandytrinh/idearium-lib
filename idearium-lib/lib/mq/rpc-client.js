@@ -9,12 +9,11 @@ class RpcClient extends Connection {
     /**
      * Constructor function
      * @param  {String}   connectionString   Rabbitmq server url
-     * @param  {String}   name               The name of the RPC server queue.
-     * @param  {Function} callback           A function to be called when there is a message to process.
      * @param  {Object}   options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
+     * @param  {Number}   rpcTimeout   Timeout (milliseconds), which if reached, the RPC will be considered failed. Defaults to 5000
      * @param  {Number}   reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
      */
-    constructor(connectionString, options, reconnectTimeout) {
+    constructor(connectionString, options, rpcTimeout = 5000, reconnectTimeout) {
 
         if (!connectionString) {
             throw new Error('connectionString parameter is required');
@@ -26,6 +25,7 @@ class RpcClient extends Connection {
         this.promises = {};
         this.channel = undefined;
         this.queue = undefined;
+        this.rpcTimeout = rpcTimeout;
 
         // Once we have a connection to Rabbit, connect as an RPC server.
         this.on('connect', this.setupRpc);
@@ -98,7 +98,7 @@ class RpcClient extends Connection {
         // Allow 2000 milliseconds for the RPC to work.
         const timeoutId = setTimeout(() => {
             reject(new Error('RPC timed out.'))
-        }, 2000);
+        }, this.rpcTimeout);
 
         this.promises[correlationId] = { resolve, reject, timeoutId };
 

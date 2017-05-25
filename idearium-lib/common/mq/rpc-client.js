@@ -9,7 +9,7 @@ var mq = require('../../lib/mq'),
  */
 class RpcClient extends mq.RpcClient {
 
-    constructor(url) {
+    constructor(url, rpcTimeout) {
 
         // Make sure we have a URL to connect to RabbitMQ.
         if (!url) {
@@ -17,7 +17,7 @@ class RpcClient extends mq.RpcClient {
         }
 
         // Configure the MqClient class.
-        super(url);
+        super(url, {}, rpcTimeout);
 
         // We'll customise the reconnection strategy from MqClient.
         this.reconnectCount = 0;
@@ -65,4 +65,4 @@ class RpcClient extends mq.RpcClient {
 
 }
 
-module.exports = new RpcClient(config.get('mqUrl'));
+module.exports = new RpcClient(config.get('mqUrl'), config.get('mqRpcClientTimeout'));
