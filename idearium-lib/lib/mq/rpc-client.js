@@ -86,24 +86,24 @@ class RpcClient extends Connection {
 
     /**
      * An internal method used to store a promise, against a correlationId, and then publish the data to the RPC.
-     * @param  {String} publishQueue  The name of the RPC.
+     * @param  {String} rpcName  The name of the RPC.
      * @param  {String} correlationId A v4 uuid used to correlate incoming messages to promises.
      * @param  {Object} data          The data to send to the RPC.
      * @param  {Function} resolve     The resolve function of a Promise.
      * @param  {Function} reject      The reject function of a Promise.
      * @return Void
      */
-    promiseManager(publishQueue, correlationId, data, resolve, reject) {
+    promiseManager(rpcName, correlationId, data, resolve, reject) {
 
         // Allow 2000 milliseconds for the RPC to work.
         const timeoutId = setTimeout(() => {
-            reject(new Error('RPC timed out.'))
+            reject(new Error(`RPC timed out (${rpcName}, ${this.rpcTimeout})`))
         }, this.rpcTimeout);
 
         this.promises[correlationId] = { resolve, reject, timeoutId };
 
         // Send a message to the server
-        this.channel.sendToQueue(publishQueue, new Buffer(JSON.stringify(data)), {
+        this.channel.sendToQueue(rpcName, new Buffer(JSON.stringify(data)), {
             correlationId,
             replyTo: this.queue.queue
         });
