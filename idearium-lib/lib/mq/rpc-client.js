@@ -74,13 +74,14 @@ class RpcClient extends Connection {
     /**
      * Used to publish a message to an RPC.
      * @param  {String} rpcName The name of the RPC.
-     * @param  {Object} data         The data to send to the RPC.
-     * @return {Promise}             A promise that will be resolved with the result.
+     * @param  {Object} data    The data to send to the RPC.
+     * @param  {Object} timeout The specific timeout for the RPC. Defaults to `this.timeout`.
+     * @return {Promise}        A promise that will be resolved with the result.
      */
-    publish(rpcName, data) {
+    publish(rpcName, data, timeout = this.rpcTimeout) {
 
         // Use the promiseManager to map promises specific to correlationIds.
-        return new Promise((resolve, reject) => this.promiseManager(rpcName, uuid.v4(), data, resolve, reject));
+        return new Promise((resolve, reject) => this.promiseManager(rpcName, uuid.v4(), data, timeout, resolve, reject));
 
     }
 
@@ -93,12 +94,12 @@ class RpcClient extends Connection {
      * @param  {Function} reject      The reject function of a Promise.
      * @return Void
      */
-    promiseManager(rpcName, correlationId, data, resolve, reject) {
+    promiseManager(rpcName, correlationId, data, timeout, resolve, reject) {
 
         // Allow 2000 milliseconds for the RPC to work.
         const timeoutId = setTimeout(() => {
-            reject(new Error(`RPC timed out (${rpcName}, ${this.rpcTimeout})`))
-        }, this.rpcTimeout);
+            reject(new Error(`RPC timed out (${rpcName}, ${timeout})`))
+        }, timeout);
 
         this.promises[correlationId] = { resolve, reject, timeoutId };
 

@@ -294,7 +294,7 @@ The amount of time that should pass before attempting to reconnect to the Rabbit
 
 ---
 
-## mq.RpcClient(connectionString, options = {}, reconnectTimeout = 5000)
+## mq.RpcClient(connectionString, options = {}, rpcTimeout = 5000, reconnectTimeout = 5000)
 
 A class used to create a connection to RabbitMQ and setup an RPC client, ready to call RPCs. You should use this class to create a singleton for your application.
 
@@ -312,11 +312,15 @@ A URL pointing to a running instance of RabbitMQ.
 
 An object that will be passed to RabbitMQ while connecting.
 
+###### rpcTimeout = 5000ms
+
+The default timeout for all RPC calls.
+
 ###### reconnectTimeout = 5000ms
 
 The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
 
-### rpcClient.publish(name, data)
+### rpcClient.publish(name, data, timeout = this.rpcTimeout)
 
 Used to call an RPC via RabbitMQ, with some data to process and return a response.
 
@@ -329,6 +333,10 @@ The name of the RPC to call with the data.
 ###### data*
 
 The data to send to the RPC to process.
+
+###### timeout = this.rpcTimeout
+
+The timeout specific to this RPC call. Allows customisation of the timeout from the global value.
 
 ---
 
