@@ -1,0 +1,10 @@
+{
+    "source": "./idearium-lib/lib",
+    "destination": "./docs",
+    "index": "./idearium-lib/README.md",
+    "plugins": [
+        {
+            "name": "esdoc-node"
+        }
+    ]
+}

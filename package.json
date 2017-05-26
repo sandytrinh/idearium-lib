@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "name": "idearium-lib-development",
+  "version": "1.0.0",
+  "description": "The development environment for idearium-lib.",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idearium/idearium-lib.git"
+  },
+  "author": "Scott Mebberson",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/idearium/idearium-lib/issues"
+  },
+  "homepage": "https://github.com/idearium/idearium-lib",
+  "devDependencies": {
+    "esdoc": "0.5.2",
+    "esdoc-node": "1.0.2"
+  },
+  "scripts": {
+    "docs-build": "./node_modules/.bin/esdoc"
+  }
+}
