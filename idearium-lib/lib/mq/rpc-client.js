@@ -4,15 +4,17 @@ var uuid = require('uuid'),
     Connection = require('./connection'),
     debug = require('debug')('idearium-lib:mq-rpc-client');
 
+/**
+* A class to create a RabbitMQ RPC client.
+* @constructor
+* @extends Connection
+* @param  {String}   connectionString   Rabbitmq server url
+* @param  {Object}   options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
+* @param  {Number}   rpcTimeout   Timeout (milliseconds), which if reached, the RPC will be considered failed. Defaults to 5000
+* @param  {Number}   reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
+*/
 class RpcClient extends Connection {
 
-    /**
-     * Constructor function
-     * @param  {String}   connectionString   Rabbitmq server url
-     * @param  {Object}   options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
-     * @param  {Number}   rpcTimeout   Timeout (milliseconds), which if reached, the RPC will be considered failed. Defaults to 5000
-     * @param  {Number}   reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
-     */
     constructor(connectionString, options, rpcTimeout = 5000, reconnectTimeout) {
 
         if (!connectionString) {

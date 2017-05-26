@@ -5,14 +5,16 @@ var url = require('url'),
     amqp = require('amqplib'),
     debug = require('debug')('idearium-lib:mq-connection');
 
+/**
+* Utility class to create a RabbitMQ connection.
+* @constructor
+* @extends EventEmitter
+* @param  {String} connectionString   Rabbitmq server url
+* @param  {Object} options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
+* @param  {Number} reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
+*/
 class Connection extends EventEmitter {
 
-    /**
-     * Constructor function
-     * @param  {String} connectionString   Rabbitmq server url
-     * @param  {Object} options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
-     * @param  {Number} reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
-     */
     constructor(connectionString, options = {}, reconnectTimeout = 5000) {
 
         if (!connectionString) {

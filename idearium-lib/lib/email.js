@@ -2,13 +2,12 @@
 
 const validator = require('validator');
 
+/**
+ * @constructor
+ * @param  {String} apiKey API key specific to the service.
+ */
 class Email {
 
-    /**
-     * Constructor
-     * @param  {String} apiKey API key specific to the service.
-     * @return {Object}        Email instance.
-     */
     constructor(apiKey, Service) {
 
         if (!apiKey) {

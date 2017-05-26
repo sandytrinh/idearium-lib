@@ -3,6 +3,12 @@
 var EventEmitter = require('events').EventEmitter,
     Loader = require('../loader');
 
+/**
+ * A class to support and load RabbitMQ consumers and producers.
+ * @constructor
+ * @extends EventEmitter
+ * @param {String} param The path to load consumers and producers from.
+ */
 class Manager extends EventEmitter {
 
     constructor(path) {
@@ -25,6 +31,10 @@ class Manager extends EventEmitter {
 
     }
 
+    /**
+     * Initiate loading the files from the directory.
+     * @return {Promise} A promise that will resolve once loaded.
+     */
     load () {
 
         // Let's attempt to the messages in straight away.

@@ -5,16 +5,18 @@ var url = require('url'),
     debug = require('debug')('idearium-lib:mq-client'),
     Connection = require('./connection');
 
+/**
+* RabbitMQ Client.
+* @constructor
+* @extends Connection
+* @param  {String} url                Rabbitmq server url
+* @param  {Object} options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
+* @param  {Number} publishConcurrency Number of messages to publish concurrently. Defaults to 3.
+* @param  {Number} queueTimeout       Timeout (milliseconds) for re-queuing publish and consumer tasks. Defaults to 5000
+* @param  {Number} reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
+*/
 class Client extends Connection {
 
-    /**
-     * Constructor function
-     * @param  {String} url                Rabbitmq server url
-     * @param  {Object} options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
-     * @param  {Number} publishConcurrency Number of messages to publish concurrently. Defaults to 3.
-     * @param  {Number} queueTimeout       Timeout (milliseconds) for re-queuing publish and consumer tasks. Defaults to 5000
-     * @param  {Number} reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
-     */
     constructor(connectionString, options, publishConcurrency, queueTimeout, reconnectTimeout) {
 
         if (!connectionString) {

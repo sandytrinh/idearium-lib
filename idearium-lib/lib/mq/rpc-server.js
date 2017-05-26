@@ -3,16 +3,18 @@
 var Connection = require('./connection'),
     debug = require('debug')('idearium-lib:mq-rpc-server');
 
+/**
+* A class to create a RabbitMQ RPC server
+* @constructor
+* @extends Connection
+* @param  {String}   connectionString   Rabbitmq server url
+* @param  {String}   name               The name of the RPC server queue.
+* @param  {Function} callback           A function to be called when there is a message to process.
+* @param  {Object}   options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
+* @param  {Number}   reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
+*/
 class RpcServer extends Connection {
 
-    /**
-     * Constructor function
-     * @param  {String}   connectionString   Rabbitmq server url
-     * @param  {String}   name               The name of the RPC server queue.
-     * @param  {Function} callback           A function to be called when there is a message to process.
-     * @param  {Object}   options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
-     * @param  {Number}   reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
-     */
     constructor(connectionString, name, callback, options, reconnectTimeout) {
 
         if (!connectionString) {

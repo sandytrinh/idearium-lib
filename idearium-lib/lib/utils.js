@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * A static class containing a few utilities.
+ */
 class Utils {
 
     /**

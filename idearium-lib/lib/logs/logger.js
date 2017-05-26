@@ -15,6 +15,7 @@ const LEVELS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
 /**
  * Create an instance of a Bunyan child logger.
+ * @private
  * @param  {String} name        The name of the logger (also the filename).
  * @param  {String} context     The context to provide with the child logger.
  * @param  {Array} serializers  Serializers that the logger should use, could be multiple.
@@ -27,6 +28,7 @@ function createLogger (name, context, serializers, streams) {
 
 /**
  * Setup a proxy method on the Logger class to log against Bunyan at a specific level.
+ * @private
  * @param  {String} level The name of the level and method to generate.
  * @return {void}
  */
@@ -40,6 +42,7 @@ function logProxyDecorator (level) {
 
 /**
  * Retrieve the streams for this Logger.
+ * @private
  * @return {Array} An array of streams, as per Bunyan.
  */
 function getStreams (_streams) {
@@ -73,9 +76,11 @@ function getStreams (_streams) {
 
 }
 
-//
-// Class
-//
+/**
+* A class to create a logger.
+* @constructor
+* @param  {Object} opts Options to configure the object.
+*/
 class Logger {
 
     constructor (opts) {

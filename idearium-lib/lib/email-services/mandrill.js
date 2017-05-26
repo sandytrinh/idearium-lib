@@ -4,6 +4,7 @@ const mandrill = require('mandrill-api/mandrill');
 
 /**
  * Send email request to Mandrill
+ * @private
  * @param  {String} apiKey Mandrill API key
  * @param  {Object}   message Mandrill API message object (see https://mandrillapp.com/api/docs/messages.JSON.html for other message properties)
  * @param  {Function} cb      Callback function
@@ -35,13 +36,13 @@ function sendRequestToMandrill (apiKey, message, callback) {
 
 }
 
+/**
+* Construct an instance of the MandrillService class.
+* @constructor
+* @param  {String} apiKey Mandrill API key specific.
+*/
 class MandrillService {
 
-    /**
-     * Construct an instance of the MandrillService class.
-     * @param  {String} apiKey Mandrill API key specific.
-     * @return {Object}        MandrillService instance.
-     */
     constructor (apiKey) {
 
         if (!apiKey) {

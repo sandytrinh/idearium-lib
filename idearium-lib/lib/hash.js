@@ -2,13 +2,12 @@
 
 const bcrypt = require('bcryptjs')
 
+/**
+* @constructor
+* @param  {String} identifier The identifier to hash
+*/
 class Hash {
 
-    /**
-     * Constructor
-     * @param  {String} identifier The identifier to hash
-     * @return {Object}            Hash instance
-     */
     constructor (identifier) {
 
         if (!identifier) {

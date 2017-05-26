@@ -2,6 +2,14 @@
 
 var le = require('le_node');
 
+/**
+* A wrapper around le_node;
+* @constructor
+* @param  {String} _name    The name of the log.
+* @param  {Number} _level   The level of the log.
+* @param  {String} _context The context for the log.
+* @param  {String} _token   The LogEntries token representing the log.
+*/
 class LogEntries {
 
     constructor (_name, _level, _context, _token) {

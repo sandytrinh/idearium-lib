@@ -1,7 +1,11 @@
 'use strict';
 
 /**
- * A class to be used as a Bunyan stream. It will take the information and log via `debug`.
+ * A clss that can be used as a Bunyan stream and will log the information via `debug`.
+ * @constructor
+ * @param  {String} name    The name of the stream.
+ * @param  {Number} level   The level of the sream.
+ * @param  {String} context The context of the stream.
  */
 class StdErr {
 

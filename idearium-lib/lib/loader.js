@@ -9,6 +9,7 @@ var fs = require('fs'),
 
 /**
  * Takes a directory and a filename, and returns an object with the transformed name and contents of the file.
+ * @private
  * @param  {String} dir  A directory containing a file.
  * @param  {String} file The name of the file within the directory.
  * @return {object}      An object with keys `name` and `content`.
@@ -38,6 +39,7 @@ function processFile (dir, file) {
 
 /**
  * Takes an array of file names and filters out `index.js`.
+ * @private
  * @param  {array} files An of file names.
  * @return {array}       The filtered array.
  */
@@ -49,6 +51,7 @@ function filterNames (files) {
 
 /**
  * A short-cut for path.basename
+ * @private
  * @param  {String} file The name of the file.
  * @return {String}      The file name sans the extension (i.e. index.js becomes index).
  */
@@ -60,6 +63,7 @@ function basename (file) {
 
 /**
  * Take a string, replace `-` and convert to camel case (i.e. camel-case becomes camelCase).
+ * @private
  * @param  {[type]} name [description]
  * @return {[type]}      [description]
  */
@@ -73,6 +77,7 @@ function toCamelCase (name) {
 
 /**
  * Take a string, replace `-` and convert to class case (i.e. camel-case becomes CamelCase).
+ * @private
  * @param  {String} name The string to replace.
  * @return {String}      The updated string.
  */
@@ -84,6 +89,7 @@ function toClassCase (name) {
 
 /**
  * Asynchronously loads a directory of files.
+ * @private
  * @param  {String} dir       The directory containing the files.
  * @param  {function} resolve A function to execute with the results.
  * @param  {function} reject  A function to execute wiht the errors.
@@ -128,6 +134,7 @@ function loadAsync (dir, resolve, reject) {
 
 /**
  * Synchronously loads a directory of files.
+ * @private
  * @param  {String} dir The directory containing files.
  * @return {Object}     An object containing keys (the transformed names of the files) and contents of the files.
  */
@@ -160,6 +167,10 @@ function loadSync (dir) {
 
 }
 
+/**
+ * Used to load JavaScript files from within a specific directory.
+ * @constructor
+ */
 class Loader {
 
     constructor () {

@@ -3,13 +3,12 @@
 var path = require('path'),
     nconf = require('nconf');
 
+/**
+ * @constructor
+ * @param  {String} dir      Config directory
+ */
 class Config {
 
-    /**
-     * Constructor
-     * @param  {String} dir      Config directory
-     * @return {Object}             Config instance
-     */
     constructor(dir) {
 
         if (!dir) {
