@@ -1,13 +1,11 @@
 'use strict';
 
 var url = require('url'),
-    EventEmitter = require('events').EventEmitter,
-    amqp = require('amqplib'),
-    when = require('when'),
     async = require('async'),
-    debug = require('debug')('idearium-lib:mq-client');
+    debug = require('debug')('idearium-lib:mq-client'),
+    Connection = require('./connection');
 
-class Client extends EventEmitter {
+class Client extends Connection {
 
     /**
      * Constructor function
@@ -24,18 +22,13 @@ class Client extends EventEmitter {
         }
 
         // Init EventEmitter
-        super();
+        super(connectionString, options, reconnectTimeout);
 
-        this.url = connectionString;
-        this.options = options || {};
         this.consumerQueue = [];
         this.publishConcurrency = publishConcurrency || 3;
         this.publisherQueue = async.queue(this.iteratePublisherQueue.bind(this), this.publishConcurrency);
         this.pausePublisherQueue();
-        this.connection = null;
-        this.state = 'disconnected';
         this.queueTimeout = queueTimeout || 5000;
-        this.reconnectTimeout = reconnectTimeout || 5000;
 
         // Support SSL based connections
         // https://help.compose.com/docs/rabbitmq-connecting-to-rabbitmq#section-node-and-rabbitmq
@@ -43,48 +36,11 @@ class Client extends EventEmitter {
             this.options.servername = url.parse(this.url).hostname;
         }
 
-    }
+        this.on('connect', () => {
 
-    /**
-     * Establish connection to rabbitmq and reconnects if connection failure occurs.
-     */
-    connect() {
-
-        if (this.state === 'connected' || this.state === 'connecting') {
-            return;
-        }
-
-        this.state = 'connecting';
-
-        debug(`Attempting to connect at ${this.url}`);
-
-        when(amqp.connect(this.url, this.options))
-        .then((conn) => {
-
-            // handle disconnection error
-            conn.on('error', (err) => {
-                debug('Disconnected!');
-                this.logError(err);
-                this.reconnect();
-                this.emit('error', err);
-            });
-
-            debug('Connected');
-            this.state = 'connected';
-            this.connection = conn;
             this.resumePublisherQueue();
             this.registerConsumers();
-            this.emit('connect');
 
-        }, (err) => {
-            debug('Unable to connect!');
-            this.logError(err);
-            this.reconnect();
-            this.emit('error', err);
-        })
-        .otherwise((err) => {
-            debug('Unexpected error.');
-            throw err;
         });
 
     }
@@ -95,12 +51,12 @@ class Client extends EventEmitter {
      */
     reconnect(timeout) {
 
-        timeout = timeout || this.reconnectTimeout;
-        debug('Reconnect in %ds', timeout / 1000);
+        // Pause the queue for now.
         this.pausePublisherQueue();
-        this.state = 'disconnected';
 
-        setTimeout(() => { this.connect(); }, timeout);
+        // Super functionality.
+        return super.reconnect(timeout);
+
 
     }
 
@@ -109,17 +65,11 @@ class Client extends EventEmitter {
      */
     disconnect() {
 
-        if (!this.connection) {
-            debug('Not connected.');
-            return;
-        }
+        // Super functionality.
+        super.disconnect();
 
-        debug('Disconnecting...');
+        // Pause the queue for now.
         this.pausePublisherQueue();
-        this.connection.close().then(() => {
-            debug('Disconnected.');
-            this.state = 'disconnected';
-        });
 
     }
 
@@ -152,17 +102,18 @@ class Client extends EventEmitter {
             return cb(new Error('Unable to iterate publisher queue, no connection.'));
         }
 
-        when(this.connection.createChannel())
-        .then((ch) => {
-            // handle channel disconnection error
-            ch.on('error', cb);
-            // execute publish function
-            when(fn(ch))
-            .then(() => ch.close())
-            .then(cb)
-            .otherwise(cb);
-        }, cb)
-        .otherwise(cb);
+        this.connection.createChannel()
+            .then((ch) => {
+
+                // handle channel disconnection error
+                ch.on('error', cb);
+
+                // execute publish function (`fn` returns a function).
+                return fn(ch)
+                    .then(() => ch.close());
+
+            })
+            .catch(cb);
 
     }
 
@@ -175,10 +126,14 @@ class Client extends EventEmitter {
         this.publisherQueue.push(fn, (err) => {
 
             if (err) {
+
                 this.logError(err);
+
                 debug('Unable to register a publisher, re-queue publisher in ' + this.queueTimeout / 1000 + 's');
-                // re-queue in 5 seconds
-                setTimeout(() => { this.publish(fn); }, this.queueTimeout);
+
+                return this.delay(this.queueTimeout)
+                    .then(() => this.publish(fn));
+
             }
 
         });
@@ -197,7 +152,7 @@ class Client extends EventEmitter {
 
         // add to this queue, this queue will be used to re-register the consumers when connection failed
         this.consumerQueue.push(fn);
-        this.registerConsumer(fn);
+        return this.registerConsumer(fn);
 
     }
 
@@ -206,11 +161,9 @@ class Client extends EventEmitter {
      */
     registerConsumers() {
 
-        this.consumerQueue.forEach((fn) => {
-            this.registerConsumer(fn);
-        });
+        debug('Registering %d consumers', this.consumerQueue.length);
 
-        debug('Registered %d consumers', this.consumerQueue.length);
+        return Promise.all(this.consumerQueue.map(fn => this.registerConsumer(fn)));
 
     }
 
@@ -225,33 +178,32 @@ class Client extends EventEmitter {
         }
 
         var cb = (err) => {
+
             if (err) {
+
                 this.logError(err);
+
                 debug('Unable to register a consumer, re-queue consumer in ' + this.queueTimeout / 1000 + 's');
-                // re-queue in 5 seconds
-                setTimeout(() => { this.registerConsumer(fn); }, this.queueTimeout);
+
+                return this.delay(this.queueTimeout)
+                    .then(() => this.registerConsumer(fn));
+
             }
+
         };
 
-        when(this.connection.createChannel())
-        .then((ch) => {
-            // handle channel disconnection error
-            ch.on('error', cb);
-            // execute consume function
-            when(fn(ch))
-            .otherwise(cb);
-        }, cb)
-        .otherwise(cb);
+        return this.connection.createChannel()
+            .then((ch) => {
 
-    }
+                // handle channel disconnection error
+                ch.on('error', cb);
 
-    /**
-     * This is an extendable function to log errors from this client
-     * @param  {Object} err Error object
-     */
-    logError(err) {
-        // log error logics here
-        console.error(err);
+                // execute consume function (`fn` returns a promise)
+                return fn(ch);
+
+            })
+            .catch(cb);
+
     }
 
 }

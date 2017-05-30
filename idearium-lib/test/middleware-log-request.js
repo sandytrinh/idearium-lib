@@ -281,7 +281,7 @@ describe('middleware.logRequest', function () {
                 expect(msg).to.match(/"method":"GET"/);
                 expect(msg).to.match(/"url":"\/log-request-stream"/);
 
-                return done();
+                return callDone();
 
             });
         });

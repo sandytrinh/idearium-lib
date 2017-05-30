@@ -115,15 +115,34 @@ require('@idearium/idearium-lib/common/mq/messages').publish(messageName, data);
 
 Will publish a message to RabbitMQ.
 
-#### messageName
+### common/mq/rpc-server
 
-Is the name of the message and should match one of the file names within the `messages` directory.
+`common/mq/rpc-server` will create a connection to RabbitMQ assuming a configuration property `mqUrl` exists providing the URL in which to connect to RabbitMQ.
 
-#### data
+```
+const RpcServer = require('@idearium/idearium-lib/common/mq/rpc-server');
+const rpcServer = new RpcServer('rpc_name', () => {});
+```
 
-An object which will be serialized to JSON and sent through RabbitMQ.
+`common/mq/rpc-server` returns a class `RpcServer` which extends `mq.RpcServer`. You must provided it the name of the RPC, and callback function will be executed with a message to process.
 
-## API
+The callback function with be passed `done`, which should be called with the results as the first argument to be returned to the RPC consumer.
+
+### common/mq/rpc-client
+
+`common/mq/rpc-client` will create a connection to RabbitMQ assuming a configuration property `mqUrl` exists providing the URL in which to connect to RabbitMQ.
+
+You can set a configuration property of `mqRpcClientTimeout` to customise the timeout value from the default of 5000 to whatever you like.
+
+```
+const rpcClient = require('@idearium/idearium-lib/common/mq/rpc-client');
+```
+
+`common/mq/rpc-client` returns an instance of `mq.rpcClient`. With the instance you can call `mq.rpcClient.publish` with the name of the RPC you want to call as the first argument and the data you want to send to the RPC as the second argument.
+
+A promise will be returned which will be resolved with the result of the RPC.
+
+# API
 
 ```
 let ideariumLib = require('@idearium/idearium-lib');
@@ -136,32 +155,190 @@ ideariumLib.Config;
 ideariumLib.Loader;
 ideariumLib.mq.Client;
 ideariumLib.mq.Manager;
+ideariumLib.mq.RpcServer;
+ideariumLib.mq.RpcClient;
 ```
 
-### ideariumLib.Config(dir)
+## ideariumLib.Config(dir)
 
-`ideariumLib.Config` will load config files (`.json` and `config.{process.env.NODE_ENV}.js`) from a provided directory.
+A class used to load in a configuration file, from a particular directory.
 
-```
+`ideariumLib.Config` will load a `config.js` file from a provided directory.
+
+#### Example
+
+```JavaScript
 let config = new ideariumLib.Config(path.resolve(__dirname, '..', 'config'));
 config.get('mqUrl');
 ```
 
-#### dir
+#### Parameters
+
+##### dir*
 
 An absolute path to a directory containing (`.js` and `.json`) configuration files.
 
-### ideariumLib.mq.Client(url)
+### config.get(config)
+
+Used to retrieve the value of a particular configuration.
+
+#### Parameters
+
+##### config*
+
+A string representing a property of the configuration object loaded from the config file.
+
+### config.set(config, value)
+
+Used to set the value of a configuration.
+
+#### Parameters
+
+##### config*
+
+A string representing the name of the configuration.
+
+##### value*
+
+A value for the configuration.
+
+---
+
+## mq.Client(url)
+
+A class used to create a connection to RabbitMQ, with methods to help publish and consume messages.
 
 `ideariumLib.mq.Client` will connect to a running instance of RabbitMQ.
 
 ```
-let ideariumMq = new ideariumLib.mq.Client('amqp://localhost:5672');
+let mqClient = new ideariumLib.mq.Client('amqp://localhost:5672');
 ```
 
-#### url
+##### Parameters
 
-`ideariumLib.mq.Client` must be provided a URL pointing to a running instance of RabbitMQ.
+###### connectionString*
+
+A URL pointing to a running instance of RabbitMQ.
+
+###### options = {}
+
+An object that will be passed to RabbitMQ while connecting.
+
+###### publishConcurrency = 3
+
+An number that determines the number of messages that will be published concurrently.
+
+###### queueTimeout = 5000ms
+
+The amount of time that should pass before re-queueing publish and consumer tasks.
+
+###### reconnectTimeout = 5000ms
+
+The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
+
+### Client.consume(fn)
+
+Used to register a consumer with RabbitMQ.
+
+##### Parameters
+
+###### fn*
+
+A function that will be called, with a new `channel` in which to setup the exchange, queue and consuming function.
+
+_**Please note**_: `fn` must `return` a promise.
+
+### Client.publish(fn)
+
+Used to register a consumer with RabbitMQ.
+
+##### Parameters
+
+###### fn*
+
+A function that will be called, with a new `channel` in which to setup an exchange to publish a message to.
+
+_**Please note**_: `fn` must `return` a promise.
+
+---
+
+## mq.RpcServer(connectionString, name, callback, options = {}, reconnectTimeout = 5000)
+
+A class used to create a connection to RabbitMQ and setup and RPC server ready to process incoming messages based on `options.name`.
+
+```
+let mqRpcServer = new ideariumLib.mq.RpcServer('amqp://localhost:5672', 'rpc_process_queue', () => {}));
+```
+
+##### Parameters
+
+###### connectionString*
+
+A URL pointing to a running instance of RabbitMQ.
+
+###### name*
+
+An object that will be passed to RabbitMQ while connecting. You should also use it to pass the name of the RPC server queue.
+
+###### callback*
+
+An callback function that will be executed when there is a message to process. The callback will be given a `done` function as the first argument which should be called by the process function with a result to return to the RPC client.
+
+###### options = {}
+
+An object that will be passed to RabbitMQ while connecting.
+
+###### reconnectTimeout = 5000ms
+
+The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
+
+---
+
+## mq.RpcClient(connectionString, options = {}, rpcTimeout = 5000, reconnectTimeout = 5000)
+
+A class used to create a connection to RabbitMQ and setup an RPC client, ready to call RPCs. You should use this class to create a singleton for your application.
+
+```
+let rpcClient = new ideariumLib.mq.RpcClient('amqp://localhost:5672');
+```
+
+##### Parameters
+
+###### connectionString*
+
+A URL pointing to a running instance of RabbitMQ.
+
+###### options = {}
+
+An object that will be passed to RabbitMQ while connecting.
+
+###### rpcTimeout = 5000ms
+
+The default timeout for all RPC calls.
+
+###### reconnectTimeout = 5000ms
+
+The amount of time that should pass before attempting to reconnect to the RabbitMQ server.
+
+### rpcClient.publish(name, data, timeout = this.rpcTimeout)
+
+Used to call an RPC via RabbitMQ, with some data to process and return a response.
+
+##### Parameters
+
+###### name*
+
+The name of the RPC to call with the data.
+
+###### data*
+
+The data to send to the RPC to process.
+
+###### timeout = this.rpcTimeout
+
+The timeout specific to this RPC call. Allows customisation of the timeout from the global value.
+
+---
 
 ### ideariumLib.Loader
 

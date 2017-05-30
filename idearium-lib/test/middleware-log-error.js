@@ -202,7 +202,7 @@ describe('middleware.logError', function () {
                 expect(msg).to.match(/idearium-lib:middleware:log-error/);
                 expect(msg).to.match(/"level":50/);
 
-                return done();
+                return callDone();
 
             });
         });

@@ -28,8 +28,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # VM configuration for virtualbox
     config.vm.provider "virtualbox" do |v|
+
         v.memory = vm_ext_conf["memory"]
         v.cpus = vm_ext_conf["cpus"]
+
+        # Make VirtualBox work like VMware and use the host's resolving as a DNS proxy in NAT mode
+        # https://www.virtualbox.org/manual/ch09.html#nat_host_resolver_proxy
+        v.customize ["modifyvm", :id, "--natdnshostresolver1", "on" ]
+
     end
 
     # define the hostname
