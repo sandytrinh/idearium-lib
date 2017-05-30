@@ -2,7 +2,7 @@
 
 This file is a history of the changes made to idearium-lib.
 
-## Unreleased
+## 1.0.0-alpha.10
 
 - **Breaking change**: `mq.Client().consume` now expects a Promise to be returned.
 - `mq.Client().publish` now expects a Promise to be returned.
