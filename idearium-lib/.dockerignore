@@ -1,0 +1,9 @@
+.git
+.vagrant
+docs
+node_modules
+vagrant
+
+idearium-lib/node_modules
+idearium-lib/coverage
+idearium-lib/examples
