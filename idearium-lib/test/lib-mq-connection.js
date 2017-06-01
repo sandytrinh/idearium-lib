@@ -17,7 +17,7 @@ describe('class mq.Connection', function () {
                 var ideariumMq = new mq.Connection();
             };
 
-            expect(fn).to.throw(Error, /connectionString parameter is required/);
+            expect(fn).to.throw(Error, /mqUrl parameter is required/);
 
         });
 
@@ -72,8 +72,8 @@ describe('class mq.Connection', function () {
                 ideariumMq.addListener('connect', function () {
 
                     ideariumMq.disconnect()
-                    .then(() => done())
-                    .catch(done);
+                        .then(() => done())
+                        .catch(done);
 
                 });
 

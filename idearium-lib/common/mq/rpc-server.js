@@ -50,7 +50,7 @@ class RpcServer extends mq.RpcServer {
         Object.assign(this.options, optionsCerts || {});
 
         // Connect even if there was an ENOENT error.
-        return this.connect();
+        this.connect();
 
     }
 
@@ -68,8 +68,7 @@ class RpcServer extends mq.RpcServer {
     reconnect() {
 
         // set timeout to the power of 2
-        var timeout = parseInt(Math.pow(2, this.reconnectCount++)) * 1000;
-        return super.reconnect(timeout);
+        super.reconnect(parseInt(Math.pow(2, this.reconnectCount++)) * 1000);
 
     }
 

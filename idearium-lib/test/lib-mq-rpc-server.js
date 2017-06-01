@@ -75,8 +75,7 @@ describe('class mq.RpcServer', function () {
                 // This usually comes from common/mq/client, but we're not using that so we'll need to do them here.
                 // Setup and start the connection straight away.
                 ideariumRPC.reconnectCount = 0;
-                ideariumRPC.connect()
-                    .catch(done);
+                ideariumRPC.connect();
 
             } catch (e) {
                 return done(e);

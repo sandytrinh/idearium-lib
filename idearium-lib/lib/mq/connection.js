@@ -9,164 +9,174 @@ class Connection extends EventEmitter {
 
     /**
      * Constructor function
-     * @param  {String} connectionString   Rabbitmq server url
-     * @param  {Object} options            Rabbitmq SSL certificates see http://www.squaremobius.net/amqp.node/ssl.html for more details
-     * @param  {Number} reconnectTimeout   Timeout (milliseconds) to reconnect to rabbitmq server. Defaults to 5000
+     * @param  {String} mqUrl              RabbitMQ server mqUrl
+     * @param  {Object} options            RabbitMQ server connection options
+     * @param  {Number} reconnectMs   Milliseconds to wait before reconnecting.
      */
-    constructor(connectionString, options = {}, reconnectTimeout = 5000) {
+    constructor(mqUrl, options = {}, reconnectMs = 5000) {
 
-        if (!connectionString) {
-            throw new Error('connectionString parameter is required');
+        if (!mqUrl) {
+            throw new Error('mqUrl parameter is required');
         }
 
         // Init EventEmitter
         super();
 
-        this.url = connectionString;
+        // Assign arguments
+        this.mqUrl = mqUrl;
         this.options = options;
-        this.reconnectTimeout = reconnectTimeout;
+        this.reconnectTimeout = reconnectMs;
+
+        // Setup connection and state.
         this.connection = null;
         this.state = 'disconnected';
 
         // Support SSL based connections
         // https://help.compose.com/docs/rabbitmq-connecting-to-rabbitmq#section-node-and-rabbitmq
         if (!this.options.servername) {
-            this.options.servername = url.parse(this.url).hostname;
+            this.options.servername = url.parse(this.mqUrl).hostname;
         }
 
     }
 
     /**
-     * Establish connection to rabbitmq and reconnects if connection failure occurs.
+     * Establish a connection to RabbitMQ and attempt to reconnect if it fails.
+     * @return {Void}
      */
     connect() {
 
+        // We don't need to connect if we already are.
         if (this.state === 'connected' || this.state === 'connecting') {
-            return null;
+            return;
         }
 
+        // Update the state
         this.state = 'connecting';
 
         debug(`Attempting to connect at ${this.url}`);
 
-        return amqp.connect(this.url, this.options)
-            .then(conn => this.connected(conn))
-            .catch((err) => {
+        // Start connecting
+        amqp.connect(this.mqUrl, this.options)
+            .then(conn => {
 
-                // This is a bit ugly, but when connecting to RabbitMQ (with SSL)
-                // older versions can throw some weird errors.
-                // This tidies up a really persistent one that seems to happen on every connect.
-                if (err.message && !err.message.startsWith('socket hang up')) {
+                // handle disconnection error
+                conn.on('error', err => this.connectionError(err, 'Disconnected!', true));
 
-                    debug('Unable to connect!');
-                    this.logError(err);
-                    this.emit('error', err);
+                this.hasConnected(conn);
 
-                }
-
-                return this.reconnect();
-
-            });
+            }, err => this.connectionError(err, `Can't to connect to ${this.mqUrl}`, true))
+            .catch(err => this.connectionError(err, `Unable to connect to ${this.mqUrl}`, true));
 
     }
 
     /**
-     * Executed once connected with the connection.
-     * @param  {Object} conn A connection object.
-     * @return Void
+     * Should be called with a connection.
+     * @private
+     * @param  {Object} conn A RabbitMQ connection.
+     * @return {Void}
      */
-    connected(conn) {
+    hasConnected(conn) {
 
+        // Store the connection and status
+        debug('Connected');
+        this.state = 'connected';
         this.connection = conn;
 
-        // handle disconnection error
-        conn.on('error', (err) => {
-
-            debug('Disconnected!');
-            this.logError(err);
-            this.emit('error', err);
-
-            return this.reconnect();
-
-        });
-
-        debug('Connected');
-
-        this.state = 'connected';
-        this.emit('connect');
+        // Announce we're connected.
+        this.emit('connect', this.connection);
 
     }
 
     /**
-     * Attempts reconnection to rabbitmq
-     * @param  {Number} timeout Timeout (milliseconds) to reconnect. Defaults to reconnectTimeout
+     * Attempts to reconnect to RabbitMQ.
+     * @private
+     * @param  {Number} [timeout=this.reconnectTimeout] The time to pass before attempting reconnection.
+     * @return {Void}
      */
-    reconnect(timeout) {
+    reconnect(timeout = this.reconnectTimeout) {
 
-        timeout = timeout || this.reconnectTimeout;
-        debug('Reconnect in %ds', timeout / 1000);
+        debug(`Reconnect in ${timeout/1000}`);
+
+        // Update our state.
         this.state = 'disconnected';
 
-        return this.delay(timeout)
-            .then(() => this.connect());
+        // Connect again at the appropriate time.
+        setTimeout(this.connect.bind(this), timeout);
 
     }
 
     /**
-     * Disconnect rabbitmq connection
+     * Disconnect from RabbitMQ.
+     * @return {Promose}
+     */
+    /**
+     * Disconnection from RabbitMQ.
+     * @return {Promise} Resolves when we've disconnected.
      */
     disconnect() {
 
-        const DISCONNECTING = 'disconnecting';
-
+        // Don't attempt if we don't have a connection.
         if (!this.connection) {
-            debug('Not connected.');
-            return;
-        }
-
-        // If we're already disconnecting, just ignore this.
-        if (this.state === DISCONNECTING) {
-            return;
+            return Promise.resolved();
         }
 
         debug('Disconnecting...');
 
-        this.state = DISCONNECTING;
-
         return this.connection.close()
-            .then(() => {
-                debug('Disconnected.');
-                this.state = 'disconnected';
-            });
+            .then(this.hasDisconnected.bind(this));
+
+    }
+
+    /**
+     * Should be called when we've disconnected (as called, not in error).
+     * @private
+     * @return {Void}
+     */
+    hasDisconnected() {
+
+        debug('Disconnected.');
+
+        // Update the state.
+        this.state = 'disconnected';
+
+        // Announce we're connected.
+        this.emit('disconnect');
+
+    }
+
+    /**
+     * Handle an announce a connection error.
+     * @private
+     * @param  {Error}  err                The error that occured
+     * @param  {String}  msg               A message for the debug output.
+     * @param  {Boolean} [reconnect=false] Should we setup a reconnect?
+     * @return {Void}
+     */
+    connectionError(err, msg, rc = false) {
+
+        // Log it
+        debug(msg);
+        this.logError(err);
+
+        // Optionally, attempt to reconnect.
+        if (rc) {
+            this.reconnect();
+        }
+
+        // Announce the error.
+        this.emit('error', err);
 
     }
 
     /**
      * This is an extendable function to log errors from this client
+     * @private
      * @param  {Object} err Error object
      */
     logError(err) {
         // log error logics here
         // eslint-disable-next-line no-console
         console.error(err);
-    }
-
-    /**
-     * A promise based variant of setTimeout.
-     * @param  {Number} t The number of milliseconds to delay.
-     * @return Promise    A promise which will be resolved once the timeout is complete.
-     */
-    delay(t) {
-        return new Promise((resolve) => setTimeout(resolve, t));
-    }
-
-    /**
-     * Given an error from a `.catch`, throw it.
-     * @param  {error} err The Error object to throw.
-     * @return Void
-     */
-    handleCatch (err) {
-        throw err;
     }
 
 }

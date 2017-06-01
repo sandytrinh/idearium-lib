@@ -37,11 +37,7 @@ describe('common/mq/rpc-server', function () {
             // When the `connect` event is fired, we're done.
             // Only listen once, because `../common/mq/rpc-server` is used in later tests.
             // It will be cached, and so we don't want to execute this instance of `done` again.
-            mqRpcServer.once('connect', function (err) {
-
-                if (err) {
-                    return done(err);
-                }
+            mqRpcServer.once('connect', function () {
 
                 // Ensure it successfully loaded all certs.
                 expect(mqRpcServer.options).to.have.property('key');
