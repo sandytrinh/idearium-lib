@@ -72,8 +72,8 @@ describe('class mq.Connection', function () {
                 ideariumMq.addListener('connect', function () {
 
                     ideariumMq.disconnect()
-                    .then(() => done())
-                    .catch(done);
+                        .then(() => done())
+                        .catch(done);
 
                 });
 

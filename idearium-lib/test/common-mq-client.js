@@ -35,11 +35,7 @@ describe('common/mq/client', function () {
             // When the `connect` event is fired, we're done.
             // Only listen once, because `../common/mq/client` is used in later tests.
             // It will be cached, and so we don't want to execute this instance of `done` again.
-            mqClient.once('connect', function (err) {
-
-                if (err) {
-                    return done(err);
-                }
+            mqClient.once('connect', function () {
 
                 // Ensure it successfully loaded all certs.
                 expect(mqClient.options).to.have.property('key');

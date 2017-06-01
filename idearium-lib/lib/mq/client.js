@@ -1,8 +1,6 @@
 'use strict';
 
-var amqp = require('amqplib'),
-    when = require('when'),
-    async = require('async'),
+var async = require('async'),
     Connection = require('./connection'),
     debug = require('debug')('idearium-lib:mq-client');
 
@@ -42,61 +40,30 @@ class Client extends Connection {
     }
 
     /**
-     * Establish connection to rabbitmq and reconnects if connection failure occurs.
+     * Establish a connection to RabbitMQ and attempt to reconnect if it fails.
+     * @override
+     * @return {Void}
      */
-    connect() {
+    hasConnected(conn) {
 
-        if (this.state === 'connected' || this.state === 'connecting') {
-            return;
-        }
+        super.hasConnected(conn);
 
-        this.state = 'connecting';
-
-        debug(`Attempting to connect at ${this.url}`);
-
-        when(amqp.connect(this.url, this.options))
-        .then((conn) => {
-
-            // handle disconnection error
-            conn.on('error', (err) => {
-                debug('Disconnected!');
-                this.logError(err);
-                this.reconnect();
-                this.emit('error', err);
-            });
-
-            debug('Connected');
-            this.state = 'connected';
-            this.connection = conn;
-            this.resumePublisherQueue();
-            this.registerConsumers();
-            this.emit('connect');
-
-        }, (err) => {
-            debug('Unable to connect!');
-            this.logError(err);
-            this.reconnect();
-            this.emit('error', err);
-        })
-        .otherwise((err) => {
-            debug('Unexpected error.');
-            throw err;
-        });
+        this.resumePublisherQueue();
+        this.registerConsumers();
 
     }
 
     /**
-     * Attempts reconnection to rabbitmq
+     * Attempts reconnection to rabbitmq.
+     * @override
      * @param  {Number} timeout Timeout (milliseconds) to reconnect. Defaults to reconnectTimeout
      */
-    reconnect(timeout) {
+    reconnect(timeout = this.reconnectTimeout) {
 
-        timeout = timeout || this.reconnectTimeout;
-        debug('Reconnect in %ds', timeout / 1000);
+        super.reconnect(timeout);
+
+        // Pause the publisher queue.
         this.pausePublisherQueue();
-        this.state = 'disconnected';
-
-        setTimeout(() => { this.connect(); }, timeout);
 
     }
 
@@ -105,17 +72,10 @@ class Client extends Connection {
      */
     disconnect() {
 
-        if (!this.connection) {
-            debug('Not connected.');
-            return;
-        }
-
-        debug('Disconnecting...');
+        // Pause the publisher queue.
         this.pausePublisherQueue();
-        this.connection.close().then(() => {
-            debug('Disconnected.');
-            this.state = 'disconnected';
-        });
+
+        return super.disconnect();
 
     }
 
@@ -148,17 +108,17 @@ class Client extends Connection {
             return cb(new Error('Unable to iterate publisher queue, no connection.'));
         }
 
-        when(this.connection.createChannel())
+        this.connection.createChannel()
         .then((ch) => {
             // handle channel disconnection error
             ch.on('error', cb);
             // execute publish function
-            when(fn(ch))
+            fn(ch)
             .then(() => ch.close())
             .then(cb)
-            .otherwise(cb);
+            .catch(cb);
         }, cb)
-        .otherwise(cb);
+        .catch(cb);
 
     }
 
@@ -229,25 +189,16 @@ class Client extends Connection {
             }
         };
 
-        when(this.connection.createChannel())
+        this.connection.createChannel()
         .then((ch) => {
             // handle channel disconnection error
             ch.on('error', cb);
             // execute consume function
-            when(fn(ch))
-            .otherwise(cb);
+            fn(ch)
+            .catch(cb);
         }, cb)
-        .otherwise(cb);
+        .catch(cb);
 
-    }
-
-    /**
-     * This is an extendable function to log errors from this client
-     * @param  {Object} err Error object
-     */
-    logError(err) {
-        // log error logics here
-        console.error(err);
     }
 
 }
