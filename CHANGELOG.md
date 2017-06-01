@@ -2,7 +2,14 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## 1.0.0-alpha.11
+
+- Large refactoring of the `mq.Connection` class.
+- Large refactoring of the `mq.Client` class.
+
 ## 1.0.0-alpha.10
+
+*Note:* this version is highly unstable. Don't use it :(
 
 - **Breaking change**: `mq.Client().consume` now expects a Promise to be returned.
 - `mq.Client().publish` now expects a Promise to be returned.
