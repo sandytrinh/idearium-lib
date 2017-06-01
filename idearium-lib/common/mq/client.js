@@ -50,8 +50,7 @@ class Client extends mq.Client {
     reconnect() {
 
         // set timeout to the power of 2
-        var timeout = parseInt(Math.pow(2, this.reconnectCount++)) * 1000;
-        super.reconnect(timeout);
+        super.reconnect(parseInt(Math.pow(2, this.reconnectCount++)) * 1000);
 
     }
 
