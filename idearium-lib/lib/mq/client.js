@@ -110,13 +110,16 @@ class Client extends Connection {
 
         this.connection.createChannel()
         .then((ch) => {
+
             // handle channel disconnection error
             ch.on('error', cb);
+
             // execute publish function
             fn(ch)
-            .then(() => ch.close())
-            .then(cb)
-            .catch(cb);
+                .then(() => ch.close())
+                .then(cb)
+                .catch(cb);
+
         }, cb)
         .catch(cb);
 
@@ -190,14 +193,17 @@ class Client extends Connection {
         };
 
         this.connection.createChannel()
-        .then((ch) => {
-            // handle channel disconnection error
-            ch.on('error', cb);
-            // execute consume function
-            fn(ch)
+            .then((ch) => {
+
+                // handle channel disconnection error
+                ch.on('error', cb);
+
+                // execute consume function
+                fn(ch)
+                    .catch(cb);
+
+            }, cb)
             .catch(cb);
-        }, cb)
-        .catch(cb);
 
     }
 
