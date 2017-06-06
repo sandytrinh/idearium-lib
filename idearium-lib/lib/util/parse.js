@@ -1,7 +1,5 @@
 'use strict';
 
-const { deprecate } = require('./util');
-
 /**
  * A method that will parse config as a boolean. Taking a string and evaluating it as `false`.
  * @param {String} str The string version of the boolean to evaluate.
@@ -18,4 +16,4 @@ const parseConfigAsBoolean = (val, defaultVal) => {
 
 };
 
-module.exports = { parseConfigAsBoolean: deprecate(parseConfigAsBoolean, 'utils.parseConfigAsBoolean: Use util.parseConfigAsBoolean instead') };
+module.exports = { parseConfigAsBoolean };

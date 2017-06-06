@@ -10,6 +10,7 @@ This file is a history of the changes made to idearium-lib.
 - Added new `publisher` to the common folder.
 - Added new `opbeat` to the common folder.
 - Added new `session` to the common folder.
+- Deprecated `utils` in favour of the new `util`. This also acts as a wrapper around the build in node `util` module.
 
 ## 1.0.0-alpha.11
 

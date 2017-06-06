@@ -6,7 +6,7 @@ module.exports = {
     mq: require('./lib/mq'),
     logs: require('./lib/logs'),
     util: require('./lib/util'),
-    utils: require('./lib/utils'), // This should eventually be merged into the util module above.
+    utils: require('./lib/utils'),
     middleware: require('./middleware'),
     emailServices: require('./lib/email-services'),
 

@@ -3,10 +3,12 @@
 const { expect } = require('chai');
 const {
     isArray,
+    isBeta,
     isDevelopment,
-    isProduction,
     isEqual,
     isObject,
+    isProduction,
+    isStaging,
 } = require('../lib/util');
 
 describe('util-is', function () {
@@ -17,6 +19,14 @@ describe('util-is', function () {
 
     it('is development environment', function () {
         expect(isDevelopment('DeVeLoPmEnT')).to.equal(true);
+    });
+
+    it('is beta environment', function () {
+        expect(isBeta('BeTa')).to.equal(true);
+    });
+
+    it('is staging environment', function () {
+        expect(isStaging('StAgInG')).to.equal(true);
     });
 
     it('is production environment', function () {

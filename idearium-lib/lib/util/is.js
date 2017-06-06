@@ -8,6 +8,13 @@
 const isArray = arr => Array.isArray(arr);
 
 /**
+ * Determine if the environment is beta.
+ * @param {String} str String to compare.
+ * @return {Boolean} True if the environment is beta.
+ */
+const isBeta = str => str.toLowerCase() === 'beta';
+
+/**
  * Determine if the environment is development.
  * @param {String} str String to compare.
  * @return {Boolean} True if the environment is development.
@@ -36,4 +43,19 @@ const isObject = obj => !isEqual(obj, null) && !isArray(obj) && obj === Object(o
  */
 const isProduction = str => str.toLowerCase() === 'production';
 
-module.exports = { isArray, isDevelopment, isEqual, isObject, isProduction };
+/**
+ * Determine if the environment is staging.
+ * @param {String} str String to compare.
+ * @return {Boolean} True if the environment is staging.
+ */
+const isStaging = str => str.toLowerCase() === 'staging';
+
+module.exports = {
+    isArray,
+    isBeta,
+    isDevelopment,
+    isEqual,
+    isObject,
+    isProduction,
+    isStaging,
+};
