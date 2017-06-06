@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const config = require('./config');
-const log = require('./log')('rasnet:app:lib/mongodb');
+const log = require('./log')('idearium-lib:common:mongodb');
 
 // This will be changed upon certain conditions (below).
 let opts = {};
