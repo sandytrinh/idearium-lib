@@ -2,6 +2,10 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## Unreleased
+
+- Added `Logger` instance to the common folder.
+
 ## 1.0.0-alpha.11
 
 - Large refactoring of the `mq.Connection` class.
