@@ -2,7 +2,7 @@
 
 const log = require('../log')('idearium-lib:common:mq/publisher');
 const mqManager = require('./messages');
-const { hasProperty } = require('./util');
+const { hasProperty } = require('../../lib/util');
 
 class Publisher {
 

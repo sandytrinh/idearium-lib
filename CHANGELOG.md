@@ -7,6 +7,9 @@ This file is a history of the changes made to idearium-lib.
 - Added `Logger` instance to the common folder.
 - Added new `util` to the library.
 - Added new `mongodb` to the common folder.
+- Added new `publisher` to the common folder.
+- Added new `opbeat` to the common folder.
+- Added new `session` to the common folder.
 
 ## 1.0.0-alpha.11
 
