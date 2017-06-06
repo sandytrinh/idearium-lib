@@ -5,6 +5,7 @@ This file is a history of the changes made to idearium-lib.
 ## Unreleased
 
 - Added `Logger` instance to the common folder.
+- Added new `util` library.
 
 ## 1.0.0-alpha.11
 
