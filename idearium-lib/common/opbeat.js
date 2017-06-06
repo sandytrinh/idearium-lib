@@ -15,7 +15,7 @@ opbeat.start({
     active: opbeatEnabled,
     appId: config.get('opbeatAppId'),
     captureExceptions: true,
-    ignoreUrls: ['/ping'],
+    ignoreUrls: config.get('opbeatIgnoreUrls').split(','),
     logBody: true,
     organizationId: config.get('opbeatOrganisationId'),
     secretToken: config.get('opbeatSecretToken'),
