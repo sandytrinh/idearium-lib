@@ -17,7 +17,7 @@ describe('util-has', function () {
         expect(hasValue({ a: 1 }, 1)).to.equal(true);
     });
 
-    it('does not have value 1', function () {
+    it('does not have value 2', function () {
         expect(hasValue({ a: 1 }, 2)).to.equal(false);
     });
 
