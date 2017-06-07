@@ -50,11 +50,10 @@ const find = (model, options) => {
  */
 const findOne = (model, options) => {
 
-    const { filter, lean, limit, projection } = getOptions(options);
+    const { filter, lean, projection } = getOptions(options);
 
     return model.findOne(filter, projection)
         .lean(lean)
-        .limit(limit)
         .exec();
 
 };
