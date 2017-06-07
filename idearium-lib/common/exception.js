@@ -1,40 +1,17 @@
 'use strict';
 
-var bunyan = require('bunyan');
+const debug = require('debug')('idearium-lib:common:exception');
+const exitErrCode = 1;
 
 module.exports = function (err) {
 
-    // Load the configuration, and an instance of Logger.
-    const config = require('../common/config'),
-        Logger = require('../').logs.Logger;
+    debug('Exception logged. Quitting Node.js process.');
 
-    // Create an instance of the logger.
-    const log = new Logger({
-        name: 'exception',
-        context: 'idearium-lib:common:exception',
-        level: 'fatal',
-        stdErr: true,
-        token: config.get('logEntriesToken') || '',
-        remote: (config.get('logLocation') || '').toLowerCase() === 'remote',
-        local: (config.get('logLocation') || '').toLowerCase() === 'local',
-        serializers: {
-            req: bunyan.stdSerializers.req,
-            res: bunyan.stdSerializers.res,
-            err: bunyan.stdSerializers.err
-        }
-    });
+    // Log the error to console.
+    // eslint-disable-next-line no-console
+    console.error(err);
 
-    // The packet we're going to log.
-    const packet = {
-        err: err,
-        production: config.get('production'),
-        status: 500
-    };
-
-    log.fatal(packet);
-
-    // quit this process in two seconds
-    // enough time to fire off the error to logentries
-    setTimeout(() => process.exit(1), 2000);
+    // Quit the process entirely.
+    process.exit(exitErrCode);
 
 };
