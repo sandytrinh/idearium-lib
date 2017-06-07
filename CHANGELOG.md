@@ -5,6 +5,7 @@ This file is a history of the changes made to idearium-lib.
 ## Unreleased
 
 - Simplified `common/exception` now that Opbeat should become standard practice.
+- Added a `query` file to help create performant queries.
 
 ## 1.0.0-alpha.13
 
