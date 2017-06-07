@@ -16,7 +16,7 @@ class Publisher {
      * @param {Object} data Message data.
      * @return {Void} Publishes the message.
      */
-    static publish (type, data) {
+    publish (type, data) {
 
         if (!hasProperty(this.messagesPath, type)) {
             return log.error(`Message of type: ${type} not found`);
@@ -31,4 +31,4 @@ class Publisher {
 
 }
 
-module.exports = messagesPath => new Publisher(messagesPath);
+module.exports = Publisher;
