@@ -1,5 +1,7 @@
 'use strict';
 
+const { deprecate } = require('./util');
+
 class Utils {
 
     /**
@@ -20,4 +22,4 @@ class Utils {
 
 }
 
-module.exports = Utils;
+module.exports = deprecate(Utils, 'Utils: Use util instead');

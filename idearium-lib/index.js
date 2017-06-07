@@ -5,6 +5,7 @@ module.exports = {
     // Packages here.
     mq: require('./lib/mq'),
     logs: require('./lib/logs'),
+    util: require('./lib/util'),
     utils: require('./lib/utils'),
     middleware: require('./middleware'),
     emailServices: require('./lib/email-services'),
