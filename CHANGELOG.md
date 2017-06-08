@@ -2,6 +2,10 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## Unreleased
+
+- Simplified `common/exception` now that Opbeat should become standard practice.
+
 ## 1.0.0-alpha.13
 
 - Fix `Publisher` class.
