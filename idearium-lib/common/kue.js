@@ -1,7 +1,7 @@
 'use strict';
 
 const log = require('./log')('idearium-lib:common:kue');
-const queue = require('./queue');
+const kueQueue = require('./kue-queue');
 
 /**
  * Verify and create a factory method for creating kue jobs.
@@ -36,7 +36,7 @@ const constructCreateMethod = (type, properties) => {
 
         Object.assign(settings, options);
 
-        const job = queue.create(type, settings);
+        const job = kueQueue.create(type, settings);
 
         job.attempts(settings.attempts)
             .backoff(settings.backoff)
@@ -44,13 +44,13 @@ const constructCreateMethod = (type, properties) => {
 
                 if (err) {
 
-                    queue.emit('job failed', settings);
+                    kueQueue.emit('job failed', settings);
 
                     return reject(new Error(`Failed to create job: ${title} of type ${type}`));
 
                 }
 
-                queue.emit('job enqueued', settings);
+                kueQueue.emit('job enqueued', settings);
 
                 return resolve(settings);
 
@@ -66,7 +66,7 @@ const constructCreateMethod = (type, properties) => {
  * @param {Function} fn Queue process callback.
  * @return {Void} Processes the job.
  */
-const process = (type, fn) => queue.process(type, (job, done) => {
+const process = (type, fn) => kueQueue.process(type, (job, done) => {
 
     log.debug({ job, type }, `Processing job with type ${type}`);
 
