@@ -3,12 +3,13 @@
 module.exports = {
 
     // Packages here.
-    mq: require('./lib/mq'),
+    emailServices: require('./lib/email-services'),
     logs: require('./lib/logs'),
+    middleware: require('./middleware'),
+    mq: require('./lib/mq'),
+    query: require('./lib/query'),
     util: require('./lib/util'),
     utils: require('./lib/utils'),
-    middleware: require('./middleware'),
-    emailServices: require('./lib/email-services'),
 
     // Export classes here.
     Config: require('./lib/config'),
