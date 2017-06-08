@@ -1,6 +1,6 @@
 'use strict';
 
-const log = require('../common/log')('idearium-lib:lib:kue');
+const log = require('./log')('idearium-lib:common:kue');
 const queue = require('./queue');
 
 /**

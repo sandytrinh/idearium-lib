@@ -4,7 +4,6 @@ module.exports = {
 
     // Packages here.
     emailServices: require('./lib/email-services'),
-    kue: require('./lib/kue'),
     logs: require('./lib/logs'),
     middleware: require('./middleware'),
     mq: require('./lib/mq'),
