@@ -28,8 +28,8 @@ const getOptions = (options) => {
 
     Object.assign(defaults, options);
 
-    // We want to return all fields.
-    if (options.projection === false) {
+    // * must be passed to return all fields.
+    if (options.projection === '*') {
         delete defaults.projection;
     }
 
@@ -60,8 +60,7 @@ const find = (model, options) => {
 
     return model.find(filter, projection)
         .lean(lean)
-        .limit(limit)
-        .exec();
+        .limit(limit);
 
 };
 
@@ -85,8 +84,7 @@ const findOne = (model, options) => {
     const { filter, lean, projection } = getOptions(options);
 
     return model.findOne(filter, projection)
-        .lean(lean)
-        .exec();
+        .lean(lean);
 
 };
 
