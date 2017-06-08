@@ -14,7 +14,7 @@
  * @param {Object} options.filter Mongo query filters.
  * @param {Boolean} options.lean Whether to return a plain JavaScript object or not.
  * @param {Number} options.limit Number of documents to return.
- * @param {String} options.projection Space delimited string containing the fields to return.
+ * @param {String} options.projection Space delimited string containing the fields to return or '*' to return all fields.
  * @return {Object} Returns the options object for Mongoose queries.
  */
 const getOptions = (options) => {
@@ -51,7 +51,7 @@ const getOptions = (options) => {
  * @param {Object} options.filter Mongo query filters.
  * @param {Boolean} options.lean Whether to return a plain JavaScript object or not.
  * @param {Number} options.limit Number of documents to return.
- * @param {String} options.projection Space delimited string containing the fields to return.
+ * @param {String} options.projection Space delimited string containing the fields to return or '*' to return all fields.
  * @return {Promise} Returns a Mongoose query.
  */
 const find = (model, options) => {
