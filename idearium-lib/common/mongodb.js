@@ -22,7 +22,7 @@ if (config.get('dbSSL')) {
     // Load in our certificates.
     // The following is blocking so works synchronously.
     // eslint-disable-next-line no-sync
-    const ca = [fs.readFileSync(path.resolve(__dirname, '..', 'mongo-certs', 'compose.io.cert'))];
+    const ca = [fs.readFileSync(path.resolve(process.cwd(), 'mongo-certs', 'compose.io.cert'))];
 
     opts = {
         mongos: {
