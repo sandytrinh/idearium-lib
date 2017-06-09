@@ -2,7 +2,7 @@
 
 This file is a history of the changes made to idearium-lib.
 
-## Unreleased
+## 1.0.0-alpha.15
 
 - Add `MandrillEmail` to common.
 - Replace `kue.process` with `kue.processJobs`. This now automates processing all jobs in the `jobs` directory.
