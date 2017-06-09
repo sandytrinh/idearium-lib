@@ -1,6 +1,6 @@
 {
   "name": "@idearium/idearium-lib",
-  "version": "1.0.0-alpha.14",
+  "version": "1.0.0-alpha.15",
   "description": "A Node.js shared library for Idearium applications.",
   "main": "index.js",
   "directories": {
