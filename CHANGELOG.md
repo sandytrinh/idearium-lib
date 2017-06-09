@@ -2,6 +2,10 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## Unreleased
+
+- Add `MandrillEmail` to common.
+
 ## 1.0.0-alpha.14
 
 - Simplified `common/exception` now that Opbeat should become standard practice.
