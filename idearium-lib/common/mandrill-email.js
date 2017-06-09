@@ -48,9 +48,7 @@ class MandrillEmail extends lib.Email {
             });
 
             if (errors.length) {
-
                 log.error({ err: errors, message }, 'Some of the emails failed to send via Mandrill');
-
             }
 
             return cb(null, result);
