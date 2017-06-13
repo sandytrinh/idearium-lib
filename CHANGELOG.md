@@ -2,7 +2,7 @@
 
 This file is a history of the changes made to idearium-lib.
 
-## Unreleased
+## 1.0.0-alpha.16
 
 - Split `common/mongodb` into two files `common/mongo/certs` and `common/mongo/connection`.
 - `common/mongo/certs` will now load CA (only) certs from a directory structure that matches `common/mq/certs`.
