@@ -6,16 +6,13 @@ let path = require('path'),
     expect = require('chai').expect,
     copy = require('copy-dir'),
     rimraf = require('rimraf'),
-    dir = path.resolve(__dirname),
-    conf = require('./conf');
+    dir = path.resolve(__dirname);
 
 describe('common/mq/certs', function () {
 
     // This is run after common-config and will have therefore cached the config from the previous test.
     // Set the mqUrl value as common/mq/client uses it.
     before(function(done) {
-
-        require('../common/config').set('mqUrl', conf.rabbitUrl);
 
         // Move the test files into place
         copy(path.resolve(dir, 'data', 'mq-certs'), path.join(dir, '..', 'mq-certs', process.env.NODE_ENV), done);

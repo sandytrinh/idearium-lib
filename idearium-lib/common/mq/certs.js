@@ -102,4 +102,4 @@ const certs = () => {
 
 }
 
-module.exports = certs(config.get('mqUrl'));
+module.exports = certs();
