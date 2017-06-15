@@ -2,6 +2,11 @@
 
 This file is a history of the changes made to idearium-lib.
 
+## Unreleased
+
+- Removed `processJobs` from `common/kue.js`.
+- `common/kue-queue.js` will now throw an error if `!config.get('kuePrefix')`.
+
 ## 1.0.0-alpha.16
 
 - Split `common/mongodb` into two files `common/mongo/certs` and `common/mongo/connection`.
