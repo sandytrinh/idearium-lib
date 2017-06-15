@@ -43,7 +43,7 @@ const certs = () => {
                     // Do we have a cert and a key?
                     if (certAndKeyExists) {
 
-                        debug('Loading SSL cert and key');
+                        debug(`Loading SSL cert and key from ${certsDir}`);
 
                         // Load in the cert and the key.
                         options.cert = fs.readFileSync(path.join(certsDir, certsFiles.filter(file => certRegex.test(file) === true)[0]));
