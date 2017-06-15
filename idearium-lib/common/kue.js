@@ -18,6 +18,11 @@ const constructCreateMethod = (type, properties) => {
         throw new Error('Properties is missing');
     }
 
+    // Always add routingKey as a required property.
+    if (type === 'webhook' && !properties.includes('routingKey')) {
+        properties.push('routingKey');
+    }
+
     return (title, options) => new Promise((resolve, reject) => {
 
         if (!properties.every(prop => Object.keys(options).includes(prop))) {
