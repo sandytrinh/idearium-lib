@@ -7,33 +7,41 @@ const config = require('../config');
 const certs = require('./certs');
 const debug = require('debug')('idearium-lib:common:mongo/connection');
 
-// Options will go here.
-const opts = {};
-
-// Turn on Promise support.
+// Use native promises for database queries.
 mongoose.Promise = global.Promise;
 
-// Once the certs have loaded, we'll update the options and connect.
-certs.
-    then(loadedCerts => {
+/**
+ * Create mongoose connections.
+ * @param {Array} connections Mongo connections.
+ * @param {String} [connections.uri=config.get('dbUrl')] Mongo connections.
+ * @param {Object} connections.options Mongo connections.
+ * @return {Promise} Returns an array of connections.
+ */
+const connect = (connections = [{ uri: config.get('dbUrl') }]) => new Promise((resolve, reject) => {
 
-        if (loadedCerts.length) {
+    certs
+      .then(loadedCerts => Promise.all(connections.map(({ uri, options }) => {
 
-            opts.mongos = {
-                ssl: true,
-                sslCA: loadedCerts,
-                sslValidate: true,
-            };
+          const defaults = { useMongoClient: true };
 
-        }
+          if (loadedCerts.length) {
 
-        debug(`Connecting to database ${Object.keys(opts).length > 0 ? 'with' : 'without'} SSL.`);
+              defaults.mongos = {
+                  ssl: true,
+                  sslCA: loadedCerts,
+                  sslValidate: true,
+              };
 
-        // Connect to Mongo on Compose.io using the certificates loaded.
-        mongoose.connect(config.get('dbUrl'), opts);
+          }
 
-    });
+          debug(`Connecting to database: ${uri} ${loadedCerts.length > 0 ? 'with' : 'without'} SSL`);
 
+          return mongoose.createConnection(uri, Object.assign({}, defaults, options));
 
-// Export mongoose
-module.exports = mongoose;
+      })))
+      .then(resolve)
+      .catch(reject);
+
+});
+
+module.exports = connect;
