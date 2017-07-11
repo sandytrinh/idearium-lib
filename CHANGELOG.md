@@ -6,6 +6,7 @@ This file is a history of the changes made to idearium-lib.
 
 - Removed `processJobs` from `common/kue.js`.
 - `common/kue-queue.js` will now throw an error if `!config.get('kuePrefix')`.
+- Added `util.parseCsv` method to parse csvs as a buffer or stream.
 
 ## 1.0.0-alpha.16
 
