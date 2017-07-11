@@ -10,14 +10,23 @@ const path = require('path'),
     chai = require('chai'),
     expect = chai.expect,
     logs = require('../').logs,
-    dir = path.resolve(__dirname, '..', 'logs');
+    dir = path.resolve(__dirname, '..', 'logs'),
+    rimraf = require('rimraf');
 
 describe('class logs.Logger', function () {
 
     before(function (done) {
 
         // Create the directory for the logger
-        fs.mkdir(dir, done);
+        rimraf('../logs', () => {
+
+            if (fs.existsSync(dir)) {
+                return done();
+            }
+
+            return fs.mkdir(dir, done);
+
+        });
 
     });
 
@@ -823,9 +832,7 @@ describe('class logs.Logger', function () {
     });
 
     after(function (done) {
-        fs.unlink(path.join(dir, 'application.log'), function () {
-            fs.rmdir(dir, done);
-        });
+        rimraf('../logs', done);
     });
 
 });

@@ -9,7 +9,8 @@ var fs = require('fs'),
     expect = require('chai').expect,
     mitm = require('mitm'),
     lib = require('../'),
-    dir = path.resolve(__dirname, '..', 'logs');
+    dir = path.resolve(__dirname, '..', 'logs'),
+    rimraf = require('rimraf');
 
 /**
  * Helper function to create an instance of an Express app.
@@ -45,8 +46,16 @@ describe('middleware.logRequest', function () {
         config.set('logEntriesToken', '00000000-0000-0000-0000-000000000000');
         config.set('production', false);
 
-        // Make the logs directory.
-        fs.mkdir(dir, done);
+        // Create the directory for the logger
+        rimraf('../logs', () => {
+
+            if (fs.existsSync(dir)) {
+                return done();
+            }
+
+            return fs.mkdir(dir, done);
+
+        });
 
     });
 
@@ -316,15 +325,7 @@ describe('middleware.logRequest', function () {
     });
 
     after(function (done) {
-        fs.unlink(path.join(dir, 'request.log'), function (err) {
-
-            if (err) {
-                return done(err);
-            }
-
-            fs.rmdir(dir, done);
-
-        });
+        rimraf('../logs', done);
     });
 
 });
