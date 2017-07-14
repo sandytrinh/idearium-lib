@@ -3,6 +3,9 @@ version: '2'
 services:
 
   # Dependency.
+  mongo:
+    build: ./idearium-lib/test/data/images/mongo
+
   rabbitmq:
     image: smebberson/alpine-rabbitmq
     environment:
@@ -17,4 +20,5 @@ services:
     environment:
       - NODE_ENV=development
     depends_on:
+      - "mongo"
       - "rabbitmq"
